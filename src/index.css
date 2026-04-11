@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: "Open Sans", Arial, sans-serif;
+  }
+}
+
+@keyframes flash-green {
+  0%   { background-color: #009a52; color: #fff; }
+  70%  { background-color: #009a52; color: #fff; }
+  100% { background-color: transparent; color: inherit; }
+}
+
+@keyframes flash-red {
+  0%   { background-color: #ee2d24; color: #fff; }
+  70%  { background-color: #ee2d24; color: #fff; }
+  100% { background-color: transparent; color: inherit; }
+}
+
+.flash-up {
+  animation: flash-green 1.2s ease-out forwards;
+}
+
+.flash-down {
+  animation: flash-red 1.2s ease-out forwards;
+}

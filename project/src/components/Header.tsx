@@ -51,10 +51,10 @@ export default function Header() {
 
         {menuOpen && (
           <div className="md:hidden pb-4 flex flex-col gap-4">
-            <a href="#rates" className="font-semibold text-sm font-montserrat" style={{ color: '#E30613' }}>Live Rates</a>
-            <a href="#about" className="text-gray-700 font-medium text-sm font-montserrat">About Us</a>
-            <a href="#download" className="text-gray-700 font-medium text-sm font-montserrat">Download</a>
-            <a href="#contact" className="text-gray-700 font-medium text-sm font-montserrat">Contact</a>
+            <a href="#rates" onClick={() => setMenuOpen(false)} className="font-semibold text-sm font-montserrat" style={{ color: '#E30613' }}>Live Rates</a>
+            <a href="#about" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium text-sm font-montserrat">About Us</a>
+            <a href="#download" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium text-sm font-montserrat">Download</a>
+            <a href="#contact" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium text-sm font-montserrat">Contact</a>
             <button className="border-2 border-gray-800 text-gray-800 px-6 py-2 text-sm font-semibold w-fit font-montserrat">Login</button>
           </div>
         )}

@@ -1,6 +1,11 @@
 import { Phone, MapPin, ArrowUp } from 'lucide-react';
+import type { Page } from '../App';
 
-export default function Footer() {
+interface FooterProps {
+  setPage: (p: Page) => void;
+}
+
+export default function Footer({ setPage }: FooterProps) {
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
@@ -74,6 +79,20 @@ export default function Footer() {
           <p className="text-sm font-bold tracking-widest text-white mb-4 uppercase font-montserrat">
             Larg Gold Private Limited
           </p>
+          <div className="flex justify-center gap-6 mb-4">
+            <button
+              onClick={() => { setPage('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="text-xs text-gray-400 hover:text-yellow-400 transition-colors font-opensans"
+            >
+              About Us
+            </button>
+            <button
+              onClick={() => { setPage('contact'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="text-xs text-gray-400 hover:text-yellow-400 transition-colors font-opensans"
+            >
+              Contact
+            </button>
+          </div>
           <p className="text-xs text-gray-400 leading-loose font-opensans">
             Murali Krishna &nbsp;|&nbsp; India
           </p>

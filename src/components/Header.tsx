@@ -11,7 +11,7 @@ export default function Header() {
           <div className="flex items-center gap-0">
             <div
               className="text-white font-black text-2xl px-4 py-2 tracking-wide rounded-sm font-montserrat"
-              style={{ backgroundColor: '#1a56db' }}
+              style={{ backgroundColor: '#fcc201', color: '#1a1a1a' }}
             >
               LARG GOLD
             </div>

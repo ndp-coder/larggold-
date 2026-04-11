@@ -8,15 +8,12 @@ export default function Header() {
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-0">
             <div
               className="text-white font-black text-2xl px-4 py-2 tracking-wide rounded-sm font-montserrat"
-              style={{ backgroundColor: '#E30613' }}
+              style={{ backgroundColor: '#1a56db' }}
             >
-              LARG
-            </div>
-            <div className="text-gray-600 text-sm font-semibold tracking-widest uppercase leading-tight font-montserrat">
-              GOLD
+              LARG GOLD
             </div>
           </div>
 

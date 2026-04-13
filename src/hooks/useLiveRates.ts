@@ -83,8 +83,8 @@ function buildCostingRates(
   silverInr: number,
   usdInr: number,
 ): CostingRate[] {
-  const goldWithPremium   = Math.round(goldInr   * 1.02);
-  const silverWithPremium = Math.round(silverInr * 1.025);
+  const goldWithPremium   = Math.round((goldInr   * 1.02)-20);
+  const silverWithPremium = Math.round((silverInr * 1.025)-20);
 
   return [
     {

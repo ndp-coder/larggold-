@@ -15,20 +15,20 @@ export default function App() {
   const { metalRates, priceDirection, tableRates, costingRates, lastUpdated, loading, error, marketClosed, nextMarketOpen } = useLiveRates();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div
+      className="min-h-screen flex flex-col"
+      style={{
+        backgroundImage: 'url(/Gemini_Generated_Image_pfxebwpfxebwpfxe_(1).png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}
+    >
       <Header page={page} setPage={setPage} />
       {page === 'home' && (
         <main className="flex-1" id="rates">
           {marketClosed && (
-            <div
-              className="relative border-b border-green-900/40 overflow-hidden"
-              style={{
-                backgroundImage: 'url(/Gemini_Generated_Image_pfxebwpfxebwpfxe_(1).png)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            >
-              <div className="absolute inset-0 bg-black/40" />
+            <div className="relative border-b border-white/20 overflow-hidden bg-black/30">
               <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-2.5">
                 <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0 shadow-sm" />
                 <p className="text-sm text-white font-medium drop-shadow">

@@ -86,7 +86,7 @@ export default function AboutUs({ setPage }: AboutUsProps) {
             className="text-xs font-bold tracking-widest uppercase mb-4 font-montserrat"
             style={{ color: '#fcc201' }}
           >
-            Est. 2023 · Vijayawada, India
+            Est. 2026 · Vijayawada, India
           </p>
           <h1 className="text-4xl md:text-6xl font-black mb-6 font-montserrat leading-tight">
             About Larg Gold

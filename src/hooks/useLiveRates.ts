@@ -104,9 +104,6 @@ function buildTableRates(
 
 // ── Costing rates builder ───────────────────────────────────────────────────
 
-const GOLD_ASK_SPREAD   = 2.0;
-const SILVER_ASK_SPREAD = 50;
-
 function toUsd(inr: number, usdInr: number, dec = 2): number {
   return Math.round((inr / usdInr) * Math.pow(10, dec)) / Math.pow(10, dec);
 }
@@ -116,22 +113,24 @@ function buildCostingRates(
   silverInr: number,
   usdInr: number,
 ): CostingRate[] {
-  const g10g = goldInr;
-  const spkg = silverInr;
-
-  const goldCol1 = toUsd(g10g, usdInr);
-  const goldCol2 = toUsd(g10g + GOLD_ASK_SPREAD * 10, usdInr);
-  const goldHigh = toUsd(g10g * 1.0005, usdInr);
-  const goldLow  = toUsd(g10g * 0.9995, usdInr);
-
-  const silvCol1 = toUsd(spkg, usdInr);
-  const silvCol2 = toUsd(spkg + SILVER_ASK_SPREAD, usdInr);
-  const silvHigh = toUsd(spkg * 1.001, usdInr);
-  const silvLow  = toUsd(spkg * 0.999, usdInr);
+  const goldWithPremium   = goldInr * 1.02;
+  const silverWithPremium = silverInr * 1.025;
 
   return [
-    { metal: 'gold',   col1: goldCol1, col2: goldCol2, high: goldHigh, low: goldLow },
-    { metal: 'silver', col1: silvCol1, col2: silvCol2, high: silvHigh, low: silvLow },
+    {
+      metal: 'gold',
+      col1:  toUsd(goldInr, usdInr),
+      col2:  toUsd(goldWithPremium, usdInr),
+      high:  toUsd(goldWithPremium * 1.001, usdInr),
+      low:   toUsd(goldWithPremium * 0.999, usdInr),
+    },
+    {
+      metal: 'silver',
+      col1:  toUsd(silverInr, usdInr),
+      col2:  toUsd(silverWithPremium, usdInr),
+      high:  toUsd(silverWithPremium * 1.001, usdInr),
+      low:   toUsd(silverWithPremium * 0.999, usdInr),
+    },
     {
       metal: 'inr',
       col1:  Math.round(usdInr * 1000) / 1000,

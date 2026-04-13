@@ -134,17 +134,19 @@ function buildTableRates(
 const GOLD_ASK_SPREAD = 2.0;    // INR per gram — dealer ask spread
 const SILVER_ASK_SPREAD = 50;   // INR per kg  — dealer ask spread
 
-function buildCostingRates(goldUsd: number, silverUsd: number, usdInr: number): CostingRate[] {
-  const gpg  = goldImpPerGram(goldUsd, usdInr);      // INR per gram
-  const g10g = Math.round(gpg * 10 * 10) / 10;       // INR per 10g
+function buildCostingRates(
+  goldUsd: number, silverUsd: number, usdInr: number,
+  goldBid: number, goldAsk: number, silverBid: number, silverAsk: number,
+): CostingRate[] {
+  const gpg  = goldImpPerGram(goldUsd, usdInr);
+  const g10g = Math.round(gpg * 10 * 10) / 10;
 
-  const spkg = silverPerKg(silverUsd, usdInr);        // INR per kg
+  const spkg = silverPerKg(silverUsd, usdInr);
 
-  // high/low derived from ±0.1% spot move so they scale with price
-  const goldHigh   = Math.round(goldImpPerGram(goldUsd * 1.001, usdInr) * 10 * 10) / 10;
-  const goldLow    = Math.round(goldImpPerGram(goldUsd * 0.999, usdInr) * 10 * 10) / 10;
-  const silverHigh = silverPerKg(silverUsd * 1.001, usdInr);
-  const silverLow  = silverPerKg(silverUsd * 0.999, usdInr);
+  const goldHigh   = Math.round(goldImpPerGram(goldAsk, usdInr) * 10 * 10) / 10;
+  const goldLow    = Math.round(goldImpPerGram(goldBid, usdInr) * 10 * 10) / 10;
+  const silverHigh = silverPerKg(silverAsk, usdInr);
+  const silverLow  = silverPerKg(silverBid, usdInr);
 
   return [
     {
@@ -241,7 +243,7 @@ export function useLiveRates() {
       });
 
       setTableRates(buildTableRates(raw.goldUsd, raw.silverUsd, raw.usdInr, prev?.goldUsd, prev?.silverUsd));
-      setCostingRates(buildCostingRates(raw.goldUsd, raw.silverUsd, raw.usdInr));
+      setCostingRates(buildCostingRates(raw.goldUsd, raw.silverUsd, raw.usdInr, raw.goldBid, raw.goldAsk, raw.silverBid, raw.silverAsk));
       setLastUpdated(new Date());
       setLoading(false);
     } catch (err) {

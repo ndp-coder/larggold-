@@ -26,7 +26,7 @@ export default function Footer({ setPage }: FooterProps) {
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-300 font-opensans">
               <MapPin size={14} className="flex-shrink-0" style={{ color: '#fcc201' }} />
-              <span>Murali Krishna, India</span>
+              <span>vijayawada, India</span>
             </div>
           </div>
 
@@ -94,7 +94,7 @@ export default function Footer({ setPage }: FooterProps) {
             </button>
           </div>
           <p className="text-xs text-gray-400 leading-loose font-opensans">
-            Murali Krishna &nbsp;|&nbsp; India
+            vijayawada &nbsp;|&nbsp; India
           </p>
         </div>
       </div>

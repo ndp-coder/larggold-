@@ -11,7 +11,7 @@ interface Props {
 
 function SilverIcon() {
   return (
-    <div className="w-14 h-14 flex items-center justify-center flex-shrink-0">
+    <div className="w-9 h-9 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
       <svg viewBox="0 0 64 64" className="w-13 h-13" fill="none">
         {/* Sparkle top-left */}
         <path d="M10 10 L11.5 13 L13 10 L11.5 7 Z" fill="#b0b8c8" opacity="0.9"/>
@@ -37,7 +37,7 @@ function SilverIcon() {
 
 function GoldIcon() {
   return (
-    <div className="w-14 h-14 flex items-center justify-center flex-shrink-0">
+    <div className="w-9 h-9 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
       <svg viewBox="0 0 64 64" className="w-13 h-13" fill="none">
         {/* Glow */}
         <ellipse cx="32" cy="52" rx="22" ry="5" fill="#e8a000" opacity="0.2"/>
@@ -66,7 +66,7 @@ function GoldIcon() {
 
 function RupeeIcon() {
   return (
-    <div className="w-14 h-14 flex items-center justify-center flex-shrink-0">
+    <div className="w-9 h-9 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
       <svg viewBox="0 0 64 64" className="w-13 h-13" fill="none">
         {/* Bag body */}
         <ellipse cx="33" cy="40" rx="18" ry="17" fill="#c9780a" stroke="#9a5a08" strokeWidth="1.2"/>
@@ -157,7 +157,7 @@ function Card({
     <div className="rounded p-3 sm:p-4 flex items-start gap-2 sm:gap-3 border border-white/30" style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(8px)' }}>
       {icon}
       <div className="min-w-0">
-        <div style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '14px', fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{label}</div>
+        <div style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(10px, 2.5vw, 14px)', fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{label}</div>
         <div className="flex items-center gap-2">
           <FlashPrice price={price} direction={direction} decimals={decimals} />
           <div
@@ -194,7 +194,7 @@ export default function MetalCards({ rates, loading, error, priceDirection }: Pr
           </div>
         </div>
       )}
-      <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="max-w-4xl mx-auto grid grid-cols-2 gap-3 sm:gap-4">
         {loading || !rates ? (
           <>
             <Skeleton />

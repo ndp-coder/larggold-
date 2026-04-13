@@ -18,12 +18,11 @@ export default function App() {
     <div
       className="min-h-screen flex flex-col"
       style={{
-        backgroundImage: 'url(/bg-image.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        backgroundRepeat: 'no-repeat',
-      }}
+  backgroundImage: 'url(/bg-image.png)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+}}
     >
       <Header page={page} setPage={setPage} />
       {page === 'home' && (

@@ -20,15 +20,23 @@ export default function App() {
       {page === 'home' && (
         <main className="flex-1" id="rates">
           {marketClosed && (
-            <div className="bg-amber-50 border-b border-amber-200">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center gap-2.5">
-                <span className="inline-block w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
-                <p className="text-sm text-amber-800 font-medium">
+            <div
+              className="relative border-b border-green-900/40 overflow-hidden"
+              style={{
+                backgroundImage: 'url(/Gemini_Generated_Image_pfxebwpfxebwpfxe_(1).png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            >
+              <div className="absolute inset-0 bg-black/40" />
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-2.5">
+                <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0 shadow-sm" />
+                <p className="text-sm text-white font-medium drop-shadow">
                   MCX market is currently closed — showing last available rates.
                   {nextMarketOpen && (
-                    <span className="font-normal ml-1">
+                    <span className="font-normal ml-1 text-white/90">
                       Reopens at{' '}
-                      <span className="font-semibold">
+                      <span className="font-semibold text-yellow-300">
                         {new Date(nextMarketOpen).toLocaleString('en-IN', {
                           timeZone: 'Asia/Kolkata',
                           weekday: 'short',

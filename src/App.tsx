@@ -24,7 +24,7 @@ export default function App() {
           <CostingTable rates={costingRates} loading={loading} />
         </main>
       )}
-      {page === 'about' && <div className="flex-1"><AboutUs /></div>}
+      {page === 'about' && <div className="flex-1"><AboutUs setPage={setPage} /></div>}
       {page === 'contact' && <div className="flex-1"><Contact /></div>}
       <Footer setPage={setPage} />
     </div>

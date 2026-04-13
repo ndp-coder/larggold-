@@ -178,31 +178,15 @@ interface RawRates {
 const EDGE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/metal-rates`;
 const EDGE_HEADERS = { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` };
 
-const INR_URL = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json';
-
 async function fetchAllRates(): Promise<RawRates> {
-  const [edgeRes, inrRes] = await Promise.allSettled([
-    fetch(EDGE_URL, { headers: EDGE_HEADERS }),
-    fetch(INR_URL),
-  ]);
+  const res = await fetch(EDGE_URL, { headers: EDGE_HEADERS });
 
-  if (edgeRes.status !== 'fulfilled' || !edgeRes.value.ok) {
-    throw new Error('Edge function unavailable');
-  }
+  if (!res.ok) throw new Error('Edge function unavailable');
 
-  const data = await edgeRes.value.json();
+  const data = await res.json();
   if (data.error) throw new Error(data.error);
 
-  // Prefer real-time CDN INR rate; fall back to edge function's rate
-  let usdInr: number = data.usdInr;
-  if (inrRes.status === 'fulfilled' && inrRes.value.ok) {
-    const inrData = await inrRes.value.json();
-    if (typeof inrData?.usd?.inr === 'number') {
-      usdInr = inrData.usd.inr;
-    }
-  }
-
-  return { ...data, usdInr } as RawRates;
+  return data as RawRates;
 }
 
 // ── Hook ────────────────────────────────────────────────────────────────────

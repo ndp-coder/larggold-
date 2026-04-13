@@ -158,36 +158,6 @@ async function fetchMetalsViaUpstox(usdInr: number): Promise<MetalsResult> {
   };
 }
 
-async function fetchMetalsFallback(usdInr: number): Promise<Omit<MetalsResult, "source">> {
-  const [goldRes, silverRes] = await Promise.all([
-    fetch("https://api.gold-api.com/price/XAU", { signal: AbortSignal.timeout(5000) }),
-    fetch("https://api.gold-api.com/price/XAG", { signal: AbortSignal.timeout(5000) }),
-  ]);
-  if (!goldRes.ok || !silverRes.ok) {
-    throw new Error(`gold-api error: ${goldRes.status}/${silverRes.status}`);
-  }
-  const [g, s] = await Promise.all([goldRes.json(), silverRes.json()]);
-  const goldUsd   = Number(g.price);
-  const silverUsd = Number(s.price);
-  if (!goldUsd || !silverUsd) throw new Error("Invalid gold-api data");
-
-  const goldInr   = Math.round((goldUsd   / TROY_OZ_TO_GRAM) * 10 * usdInr);
-  const silverInr = Math.round((silverUsd * TROY_OZ_TO_KG)   *      usdInr);
-
-  return {
-    goldUsd,
-    silverUsd,
-    goldInr,
-    silverInr,
-    goldBid:    typeof g.bid === "number" ? g.bid : goldUsd   * 0.9995,
-    goldAsk:    typeof g.ask === "number" ? g.ask : goldUsd   * 1.0005,
-    silverBid:  typeof s.bid === "number" ? s.bid : silverUsd * 0.999,
-    silverAsk:  typeof s.ask === "number" ? s.ask : silverUsd * 1.001,
-    goldChange:   g.chp ?? g.ch ?? 0,
-    silverChange: s.chp ?? s.ch ?? 0,
-  };
-}
-
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
@@ -195,15 +165,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const usdInr = await fetchUsdInr();
-
-    let metals: Omit<MetalsResult, "source"> & { source?: string };
-
-    try {
-      metals = await fetchMetalsViaUpstox(usdInr);
-    } catch (upstoxErr) {
-      console.warn("Upstox failed, using fallback:", String(upstoxErr));
-      metals = { ...(await fetchMetalsFallback(usdInr)), source: "gold-api-fallback" };
-    }
+    const metals = await fetchMetalsViaUpstox(usdInr);
 
     return new Response(JSON.stringify({ ...metals, usdInr }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

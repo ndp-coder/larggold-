@@ -116,7 +116,7 @@ export default function AboutUs({ setPage }: AboutUsProps) {
               Revolutionizing the Way India Deals in Gold
             </h2>
             <p className="text-gray-600 leading-relaxed mb-4 font-opensans text-sm">
-              LARG GOLD is a fast-growing and trusted gold solutions company based in Vijayawada (est. 2023),
+              LARG GOLD is a fast-growing and trusted gold solutions company based in Vijayawada (est. 2026),
               built with a vision to revolutionize the way people buy, sell, and release pledged gold.
             </p>
             <p className="text-gray-600 leading-relaxed mb-4 font-opensans text-sm">

@@ -45,7 +45,7 @@ function buildTableRates(
   const gDir = prevGoldInr   !== undefined ? getDir(goldInr,   prevGoldInr)   : 'neutral';
 
   const goldPrice   = Math.round((goldInr   * 1.02)/10);
-  const silverPrice = Math.round((silverInr * 1.025)/10);
+  const silverPrice = Math.round((silverInr * 1.025));
 
   return [
     {

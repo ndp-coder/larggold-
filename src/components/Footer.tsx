@@ -36,7 +36,7 @@ export default function Footer({ setPage }: FooterProps) {
               <Phone size={14} className="flex-shrink-0" style={{ color: '#fcc201' }} />
               <span>+91 8184839498</span>
             </div>
-            <div className="text-sm text-gray-300 font-opensans">support@larggold.com</div>
+            <div className="text-sm text-gray-300 font-opensans">larggold@gmail.com</div>
           </div>
 
           <div id="download">

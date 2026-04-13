@@ -57,9 +57,9 @@ function fmt(val: number, metal: CostingRate['metal']): string {
 
 export default function CostingTable({ rates, loading }: Props) {
   return (
-    <div className="py-8 px-6 bg-white">
+    <div className="py-8 px-6">
       <div className="max-w-4xl mx-auto">
-        <div style={{ border: '1px solid #cccccc' }}>
+        <div style={{ border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(8px)' }}>
           <div className="px-5 py-3" style={{ borderBottom: '1px solid #cccccc' }}>
             <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '13px', fontWeight: 900, color: '#333333', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Costing</span>
           </div>

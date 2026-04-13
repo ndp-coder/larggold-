@@ -57,10 +57,7 @@ function FlashCell({
 
 export default function RatesTable({ rates, lastUpdated, loading }: Props) {
   return (
-    <div
-      className="px-6 pb-10"
-      style={{ background: 'linear-gradient(180deg, #b8960c 0%, #c9a830 40%, #b8960c 100%)' }}
-    >
+    <div className="px-6 pb-10">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -76,7 +73,7 @@ export default function RatesTable({ rates, lastUpdated, loading }: Props) {
         </div>
 
         
-        <div className="bg-white overflow-hidden" style={{ border: '1px solid #cccccc' }}>
+        <div className="overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(8px)' }}>
           {loading ? (
             <>
               {[...Array(7)].map((_, i) => <SkeletonRow key={i} />)}

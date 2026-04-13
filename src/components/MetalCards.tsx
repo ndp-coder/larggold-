@@ -9,18 +9,6 @@ interface Props {
   priceDirection: PriceDirection;
 }
 
-function Skeleton() {
-  return (
-    <div className="bg-white rounded p-4 flex items-center gap-3 animate-pulse border border-gray-200">
-      <div className="flex-1">
-        <div className="h-3 bg-gray-200 rounded w-20 mb-2" />
-        <div className="h-7 bg-gray-200 rounded w-24 mb-2" />
-        <div className="h-3 bg-gray-200 rounded w-20" />
-      </div>
-    </div>
-  );
-}
-
 function FlashPrice({
   price,
   direction,
@@ -30,7 +18,7 @@ function FlashPrice({
   direction: 'up' | 'down' | 'neutral';
   decimals: number;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const el = ref.current;
@@ -47,97 +35,114 @@ function FlashPrice({
     : price.toFixed(decimals);
 
   return (
-    <div ref={ref} className="rounded px-1 transition-colors" style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(22px, 5vw, 32px)', fontWeight: 800, color: '#000000', lineHeight: 1.1 }}>
+    <span ref={ref} className="rounded transition-colors" style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '18px', fontWeight: 800, color: '#111' }}>
       {formatted}
-    </div>
-  );
-}
-
-function Card({
-  label,
-  price,
-  low,
-  high,
-  change,
-  direction,
-  decimals = 2,
-}: {
-  label: string;
-  price: number;
-  low: number;
-  high: number;
-  change: number;
-  direction: 'up' | 'down' | 'neutral';
-  decimals?: number;
-}) {
-  const up = change >= 0;
-  return (
-    <div className="rounded p-3 sm:p-4 flex items-start border border-white/30" style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(8px)' }}>
-      <div className="min-w-0">
-        <div style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(10px, 2.5vw, 14px)', fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{label}</div>
-        <div className="flex items-center gap-2">
-          <FlashPrice price={price} direction={direction} decimals={decimals} />
-          <div
-            className="flex items-center gap-0.5"
-            style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '12px', fontWeight: 700, color: up ? '#5CB85C' : '#D9534F' }}
-          >
-            {up ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-            {Math.abs(change).toFixed(2)}%
-          </div>
-        </div>
-        <div style={{ marginTop: '2px' }}>
-          <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '13px', fontWeight: 700, color: '#D9534F' }}>
-            {decimals === 0 ? low.toLocaleString('en-IN') : low.toFixed(decimals)}
-          </span>
-          <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '14px', fontWeight: 400, color: '#CCCCCC', margin: '0 4px' }}>|</span>
-          <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '13px', fontWeight: 700, color: '#5CB85C' }}>
-            {decimals === 0 ? high.toLocaleString('en-IN') : high.toFixed(decimals)}
-          </span>
-        </div>
-      </div>
-    </div>
+    </span>
   );
 }
 
 export default function MetalCards({ rates, loading, error, priceDirection }: Props) {
+  const font = { fontFamily: 'Montserrat, sans-serif' };
+
+  const rows = rates
+    ? [
+        {
+          label: 'Silver MCX',
+          unit: '₹/kg',
+          price: rates.silver.price,
+          low: rates.silver.low,
+          high: rates.silver.high,
+          change: rates.silver.change,
+          direction: priceDirection.silver,
+          decimals: 0,
+        },
+        {
+          label: 'Gold MCX',
+          unit: '₹/10g',
+          price: rates.gold.price,
+          low: rates.gold.low,
+          high: rates.gold.high,
+          change: rates.gold.change,
+          direction: priceDirection.gold,
+          decimals: 0,
+        },
+      ]
+    : [];
+
   return (
-    <div className="py-6 sm:py-10 px-3 sm:px-6">
+    <div className="py-6 sm:py-10 px-3 sm:px-6 flex flex-col items-center">
       {error && (
-        <div className="max-w-4xl mx-auto mb-4">
+        <div className="w-full max-w-2xl mb-4">
           <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded px-4 py-2 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse inline-block" />
             {error}
           </div>
         </div>
       )}
-      <div className="max-w-4xl mx-auto grid grid-cols-2 gap-3 sm:gap-4">
-        {loading || !rates ? (
-          <>
-            <Skeleton />
-            <Skeleton />
-          </>
-        ) : (
-          <>
-            <Card
-              label="SILVER MCX (₹/kg)"
-              price={rates.silver.price}
-              low={rates.silver.low}
-              high={rates.silver.high}
-              change={rates.silver.change}
-              direction={priceDirection.silver}
-              decimals={0}
-            />
-            <Card
-              label="GOLD MCX (₹/10g)"
-              price={rates.gold.price}
-              low={rates.gold.low}
-              high={rates.gold.high}
-              change={rates.gold.change}
-              direction={priceDirection.gold}
-              decimals={0}
-            />
-          </>
-        )}
+
+      <div className="w-full max-w-2xl rounded-xl overflow-hidden shadow-lg border border-white/40" style={{ background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(10px)' }}>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr style={{ background: 'rgba(0,0,0,0.06)' }}>
+              {['Metal', 'Price', 'Change', 'Low', 'High'].map((h) => (
+                <th
+                  key={h}
+                  className="py-3 px-4 text-center"
+                  style={{ ...font, fontSize: '11px', fontWeight: 700, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid rgba(0,0,0,0.08)' }}
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading || !rates ? (
+              [0, 1].map((i) => (
+                <tr key={i} className="animate-pulse">
+                  {[0, 1, 2, 3, 4].map((j) => (
+                    <td key={j} className="py-4 px-4">
+                      <div className="h-4 bg-gray-200 rounded mx-auto" style={{ width: j === 0 ? '80px' : '60px' }} />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              rows.map((row, idx) => {
+                const up = row.change >= 0;
+                return (
+                  <tr
+                    key={row.label}
+                    style={{ borderTop: idx > 0 ? '1px solid rgba(0,0,0,0.07)' : undefined }}
+                    className="hover:bg-black/[0.02] transition-colors"
+                  >
+                    <td className="py-4 px-4 text-center">
+                      <div style={{ ...font, fontSize: '13px', fontWeight: 700, color: '#111' }}>{row.label}</div>
+                      <div style={{ ...font, fontSize: '11px', fontWeight: 500, color: '#888' }}>{row.unit}</div>
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <FlashPrice price={row.price} direction={row.direction} decimals={row.decimals} />
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <div
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+                        style={{ background: up ? '#e8f8e8' : '#fdeaea', ...font, fontSize: '12px', fontWeight: 700, color: up ? '#2e8b2e' : '#c0392b' }}
+                      >
+                        {up ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
+                        {Math.abs(row.change).toFixed(2)}%
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 text-center" style={{ ...font, fontSize: '14px', fontWeight: 700, color: '#c0392b' }}>
+                      {row.decimals === 0 ? row.low.toLocaleString('en-IN') : row.low.toFixed(row.decimals)}
+                    </td>
+                    <td className="py-4 px-4 text-center" style={{ ...font, fontSize: '14px', fontWeight: 700, color: '#2e8b2e' }}>
+                      {row.decimals === 0 ? row.high.toLocaleString('en-IN') : row.high.toFixed(row.decimals)}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

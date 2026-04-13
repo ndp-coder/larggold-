@@ -101,6 +101,7 @@ async function getFrontMonthKey(instruments: McxInstrument[], assetSymbol: strin
 
 interface MetalsResult {
   goldUsd: number; silverUsd: number;
+  goldInr: number; silverInr: number;
   goldBid: number; goldAsk: number;
   silverBid: number; silverAsk: number;
   goldChange: number; silverChange: number;
@@ -145,6 +146,8 @@ async function fetchMetalsViaUpstox(usdInr: number): Promise<MetalsResult> {
   return {
     goldUsd,
     silverUsd,
+    goldInr:    goldLtp,
+    silverInr:  silverLtp,
     goldBid:    goldUsd   * 0.9995,
     goldAsk:    goldUsd   * 1.0005,
     silverBid:  silverUsd * 0.999,
@@ -155,7 +158,7 @@ async function fetchMetalsViaUpstox(usdInr: number): Promise<MetalsResult> {
   };
 }
 
-async function fetchMetalsFallback(): Promise<Omit<MetalsResult, "source">> {
+async function fetchMetalsFallback(usdInr: number): Promise<Omit<MetalsResult, "source">> {
   const [goldRes, silverRes] = await Promise.all([
     fetch("https://api.gold-api.com/price/XAU", { signal: AbortSignal.timeout(5000) }),
     fetch("https://api.gold-api.com/price/XAG", { signal: AbortSignal.timeout(5000) }),
@@ -167,9 +170,15 @@ async function fetchMetalsFallback(): Promise<Omit<MetalsResult, "source">> {
   const goldUsd   = Number(g.price);
   const silverUsd = Number(s.price);
   if (!goldUsd || !silverUsd) throw new Error("Invalid gold-api data");
+
+  const goldInr   = Math.round((goldUsd   / TROY_OZ_TO_GRAM) * 10 * usdInr);
+  const silverInr = Math.round((silverUsd * TROY_OZ_TO_KG)   *      usdInr);
+
   return {
     goldUsd,
     silverUsd,
+    goldInr,
+    silverInr,
     goldBid:    typeof g.bid === "number" ? g.bid : goldUsd   * 0.9995,
     goldAsk:    typeof g.ask === "number" ? g.ask : goldUsd   * 1.0005,
     silverBid:  typeof s.bid === "number" ? s.bid : silverUsd * 0.999,
@@ -193,7 +202,7 @@ Deno.serve(async (req: Request) => {
       metals = await fetchMetalsViaUpstox(usdInr);
     } catch (upstoxErr) {
       console.warn("Upstox failed, using fallback:", String(upstoxErr));
-      metals = { ...(await fetchMetalsFallback()), source: "gold-api-fallback" };
+      metals = { ...(await fetchMetalsFallback(usdInr)), source: "gold-api-fallback" };
     }
 
     return new Response(JSON.stringify({ ...metals, usdInr }), {

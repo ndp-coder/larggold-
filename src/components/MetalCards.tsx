@@ -122,9 +122,13 @@ function FlashPrice({
     else if (direction === 'down') el.classList.add('flash-down');
   }, [price, direction]);
 
+  const formatted = decimals === 0
+    ? price.toLocaleString('en-IN')
+    : price.toFixed(decimals);
+
   return (
     <div ref={ref} className="rounded px-1 transition-colors" style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '32px', fontWeight: 800, color: '#000000', lineHeight: 1.1 }}>
-      {price.toFixed(decimals)}
+      {formatted}
     </div>
   );
 }
@@ -166,9 +170,13 @@ function Card({
         </div>
         {/* Low (red) | High (green) */}
         <div style={{ marginTop: '2px' }}>
-          <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '13px', fontWeight: 700, color: '#D9534F' }}>{low.toFixed(decimals)}</span>
+          <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '13px', fontWeight: 700, color: '#D9534F' }}>
+            {decimals === 0 ? low.toLocaleString('en-IN') : low.toFixed(decimals)}
+          </span>
           <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '14px', fontWeight: 400, color: '#CCCCCC', margin: '0 4px' }}>|</span>
-          <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '13px', fontWeight: 700, color: '#5CB85C' }}>{high.toFixed(decimals)}</span>
+          <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '13px', fontWeight: 700, color: '#5CB85C' }}>
+            {decimals === 0 ? high.toLocaleString('en-IN') : high.toFixed(decimals)}
+          </span>
         </div>
       </div>
     </div>
@@ -200,23 +208,23 @@ export default function MetalCards({ rates, loading, error, priceDirection }: Pr
           <>
             <Card
               icon={<SilverIcon />}
-              label="SILVER ($)"
+              label="SILVER MCX (₹/kg)"
               price={rates.silver.price}
               low={rates.silver.low}
               high={rates.silver.high}
               change={rates.silver.change}
               direction={priceDirection.silver}
-              decimals={3}
+              decimals={0}
             />
             <Card
               icon={<GoldIcon />}
-              label="GOLD ($)"
+              label="GOLD MCX (₹/10g)"
               price={rates.gold.price}
               low={rates.gold.low}
               high={rates.gold.high}
               change={rates.gold.change}
               direction={priceDirection.gold}
-              decimals={2}
+              decimals={0}
             />
             <Card
               icon={<RupeeIcon />}

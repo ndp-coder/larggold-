@@ -127,9 +127,9 @@ const EDGE_HEADERS = { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_AN
 
 async function fetchAllRates(): Promise<RawRates> {
   const res = await fetch(EDGE_URL, { headers: EDGE_HEADERS });
-  if (!res.ok) throw new Error('Edge function unavailable');
   const data = await res.json();
   if (data.error) throw new Error(data.error);
+  if (!res.ok) throw new Error('Edge function unavailable');
   return data as RawRates;
 }
 

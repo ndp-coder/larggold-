@@ -125,12 +125,18 @@ interface RawRates {
 const EDGE_URL     = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/metal-rates`;
 const EDGE_HEADERS = { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` };
 
-async function fetchAllRates(): Promise<RawRates> {
+interface RawRatesResponse extends RawRates {
+  marketClosed?: boolean;
+  nextMarketOpen?: string | null;
+  cachedAt?: string;
+}
+
+async function fetchAllRates(): Promise<RawRatesResponse> {
   const res = await fetch(EDGE_URL, { headers: EDGE_HEADERS });
   const data = await res.json();
   if (data.error) throw new Error(data.error);
   if (!res.ok) throw new Error('Edge function unavailable');
-  return data as RawRates;
+  return data as RawRatesResponse;
 }
 
 // ── Hook ────────────────────────────────────────────────────────────────────
@@ -143,6 +149,8 @@ export function useLiveRates() {
   const [lastUpdated, setLastUpdated]     = useState<Date>(new Date());
   const [loading, setLoading]             = useState(true);
   const [error, setError]                 = useState<string | null>(null);
+  const [marketClosed, setMarketClosed]   = useState(false);
+  const [nextMarketOpen, setNextMarketOpen] = useState<string | null>(null);
   const prevRaw = useRef<RawRates | null>(null);
 
   const update = async () => {
@@ -157,6 +165,8 @@ export function useLiveRates() {
 
       prevRaw.current = raw;
       setError(null);
+      setMarketClosed(raw.marketClosed ?? false);
+      setNextMarketOpen(raw.nextMarketOpen ?? null);
       setPriceDirection({ gold: goldDir, silver: silverDir, inr: inrDir });
 
       setMetalRates({
@@ -197,5 +207,5 @@ export function useLiveRates() {
     return () => clearInterval(interval);
   }, []);
 
-  return { metalRates, priceDirection, tableRates, costingRates, lastUpdated, loading, error };
+  return { metalRates, priceDirection, tableRates, costingRates, lastUpdated, loading, error, marketClosed, nextMarketOpen };
 }

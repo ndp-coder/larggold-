@@ -28,20 +28,14 @@ function getSupabase() {
   );
 }
 
-async function getCachedRates() {
+async function getCacheEntry() {
   const supabase = getSupabase();
   const { data } = await supabase
     .from("rates_cache")
     .select("data, fetched_at")
     .eq("id", CACHE_KEY)
     .maybeSingle();
-
-  if (!data) return null;
-
-  const age = Date.now() - new Date(data.fetched_at).getTime();
-  if (age > CACHE_TTL_MS) return null;
-
-  return data.data;
+  return data ?? null;
 }
 
 async function setCachedRates(rates: object) {
@@ -132,6 +126,50 @@ async function getFrontMonthKey(instruments: McxInstrument[], assetSymbol: strin
   return futures[0].instrument_key;
 }
 
+function getNextMarketOpen(): string {
+  const now = new Date();
+  const IST_OFFSET = 5.5 * 60 * 60 * 1000;
+  const istNow = new Date(now.getTime() + IST_OFFSET);
+
+  const day = istNow.getUTCDay();
+  const hour = istNow.getUTCHours();
+  const minute = istNow.getUTCMinutes();
+
+  const currentMinutes = hour * 60 + minute;
+  const openMinutes = 9 * 60;
+  const closeMinutes = 23 * 60 + 30;
+
+  let nextOpenIST: Date;
+
+  if (day === 0) {
+    const daysUntilMon = 1;
+    nextOpenIST = new Date(istNow);
+    nextOpenIST.setUTCDate(istNow.getUTCDate() + daysUntilMon);
+    nextOpenIST.setUTCHours(9, 0, 0, 0);
+  } else if (day === 6) {
+    const daysUntilMon = 2;
+    nextOpenIST = new Date(istNow);
+    nextOpenIST.setUTCDate(istNow.getUTCDate() + daysUntilMon);
+    nextOpenIST.setUTCHours(9, 0, 0, 0);
+  } else if (currentMinutes >= closeMinutes) {
+    nextOpenIST = new Date(istNow);
+    if (day === 5) {
+      nextOpenIST.setUTCDate(istNow.getUTCDate() + 3);
+    } else {
+      nextOpenIST.setUTCDate(istNow.getUTCDate() + 1);
+    }
+    nextOpenIST.setUTCHours(9, 0, 0, 0);
+  } else if (currentMinutes < openMinutes) {
+    nextOpenIST = new Date(istNow);
+    nextOpenIST.setUTCHours(9, 0, 0, 0);
+  } else {
+    return "";
+  }
+
+  const utcTime = new Date(nextOpenIST.getTime() - IST_OFFSET);
+  return utcTime.toISOString();
+}
+
 async function fetchFreshRates() {
   const [usdInr, instruments] = await Promise.all([fetchUsdInr(), getMcxInstruments()]);
 
@@ -159,7 +197,7 @@ async function fetchFreshRates() {
   const goldCp    = Number(goldEntry.cp);
   const silverCp  = Number(silverEntry.cp);
 
-  if (!goldLtp || !silverLtp) throw new Error("Zero LTP — market may be closed");
+  if (!goldLtp || !silverLtp) throw new Error("Zero LTP — market is closed");
 
   const goldUsd   = (goldLtp   / 10 / usdInr) * TROY_OZ_TO_GRAM;
   const silverUsd = (silverLtp      / usdInr)  / TROY_OZ_TO_KG;
@@ -189,19 +227,41 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const cached = await getCachedRates();
-    if (cached) {
-      return new Response(JSON.stringify({ ...cached, fromCache: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const cacheEntry = await getCacheEntry();
+    const now = Date.now();
+
+    if (cacheEntry) {
+      const age = now - new Date(cacheEntry.fetched_at).getTime();
+      if (age <= CACHE_TTL_MS) {
+        return new Response(JSON.stringify({ ...cacheEntry.data, fromCache: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
-    const rates = await fetchFreshRates();
-    EdgeRuntime.waitUntil(setCachedRates(rates));
-
-    return new Response(JSON.stringify(rates), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    try {
+      const rates = await fetchFreshRates();
+      EdgeRuntime.waitUntil(setCachedRates(rates));
+      return new Response(JSON.stringify(rates), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    } catch (fetchErr) {
+      if (cacheEntry?.data) {
+        const nextOpen = getNextMarketOpen();
+        const payload = {
+          ...cacheEntry.data,
+          fromCache: true,
+          marketClosed: true,
+          marketClosedReason: String(fetchErr),
+          nextMarketOpen: nextOpen || null,
+          cachedAt: cacheEntry.fetched_at,
+        };
+        return new Response(JSON.stringify(payload), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw fetchErr;
+    }
   } catch (err) {
     return new Response(JSON.stringify({ error: String(err) }), {
       status: 502,

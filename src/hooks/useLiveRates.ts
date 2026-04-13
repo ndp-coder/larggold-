@@ -113,23 +113,23 @@ function buildCostingRates(
   silverInr: number,
   usdInr: number,
 ): CostingRate[] {
-  const goldWithPremium   = goldInr * 1.02;
-  const silverWithPremium = silverInr * 1.025;
+  const goldWithPremium   = Math.round(goldInr   * 1.02);
+  const silverWithPremium = Math.round(silverInr * 1.025);
 
   return [
     {
       metal: 'gold',
-      col1:  toUsd(goldInr, usdInr),
-      col2:  toUsd(goldWithPremium, usdInr),
-      high:  toUsd(goldWithPremium * 1.001, usdInr),
-      low:   toUsd(goldWithPremium * 0.999, usdInr),
+      col1:  Math.round(goldInr),
+      col2:  goldWithPremium,
+      high:  Math.round(goldWithPremium   * 1.001),
+      low:   Math.round(goldWithPremium   * 0.999),
     },
     {
       metal: 'silver',
-      col1:  toUsd(silverInr, usdInr),
-      col2:  toUsd(silverWithPremium, usdInr),
-      high:  toUsd(silverWithPremium * 1.001, usdInr),
-      low:   toUsd(silverWithPremium * 0.999, usdInr),
+      col1:  Math.round(silverInr),
+      col2:  silverWithPremium,
+      high:  Math.round(silverWithPremium * 1.001),
+      low:   Math.round(silverWithPremium * 0.999),
     },
     {
       metal: 'inr',

@@ -52,7 +52,7 @@ function SkeletonRow() {
 
 function fmt(val: number, metal: CostingRate['metal']): string {
   if (metal === 'inr') return val.toFixed(3);
-  return val.toFixed(2);
+  return Math.round(val).toLocaleString('en-IN');
 }
 
 export default function CostingTable({ rates, loading }: Props) {

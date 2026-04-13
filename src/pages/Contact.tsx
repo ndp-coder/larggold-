@@ -1,22 +1,33 @@
 import { useState } from 'react';
 import { Phone, Mail, MapPin, Send, CheckCircle } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+    const { error: dbError } = await supabase.from('contact_messages').insert({
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      message: form.message,
+    });
+    setLoading(false);
+    if (dbError) {
+      setError('Something went wrong. Please try again.');
+    } else {
       setSubmitted(true);
-    }, 1200);
+    }
   };
 
   const contactDetails = [
@@ -191,6 +202,10 @@ export default function Contact() {
                     className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent resize-none font-opensans"
                   />
                 </div>
+
+                {error && (
+                  <p className="text-sm text-red-600 font-opensans">{error}</p>
+                )}
 
                 <button
                   type="submit"

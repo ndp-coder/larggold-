@@ -52,7 +52,16 @@ export default function Contact() {
   ];
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main
+      className="min-h-screen"
+      style={{
+        backgroundImage: 'url(/Gemini_Generated_Image_pfxebwpfxebwpfxe_(1).png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
       <section
         className="relative py-24 text-white"
         style={{
@@ -74,7 +83,7 @@ export default function Contact() {
         </div>
       </section>
 
-      <section className="py-20">
+      <section className="py-20" style={{ backgroundColor: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(2px)' }}>
         <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
           <div>
             <h2 className="text-2xl font-black mb-2 text-gray-900 font-montserrat">

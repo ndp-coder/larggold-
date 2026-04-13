@@ -73,7 +73,16 @@ export default function AboutUs({ setPage }: AboutUsProps) {
   ];
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main
+      className="min-h-screen"
+      style={{
+        backgroundImage: 'url(/Gemini_Generated_Image_pfxebwpfxebwpfxe_(1).png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
       <section
         className="relative py-28 text-white"
         style={{
@@ -103,7 +112,7 @@ export default function AboutUs({ setPage }: AboutUsProps) {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-20" style={{ backgroundColor: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(2px)' }}>
         <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
           <div>
             <p
@@ -140,7 +149,7 @@ export default function AboutUs({ setPage }: AboutUsProps) {
         </div>
       </section>
 
-      <section className="py-16 bg-gray-50">
+      <section className="py-16" style={{ backgroundColor: 'rgba(243,244,246,0.85)', backdropFilter: 'blur(2px)' }}>
         <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div
             className="rounded-2xl p-10 text-white"
@@ -189,7 +198,7 @@ export default function AboutUs({ setPage }: AboutUsProps) {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-20" style={{ backgroundColor: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(2px)' }}>
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-14">
             <p
@@ -220,7 +229,7 @@ export default function AboutUs({ setPage }: AboutUsProps) {
         </div>
       </section>
 
-      <section className="py-20 bg-gray-50">
+      <section className="py-20" style={{ backgroundColor: 'rgba(243,244,246,0.85)', backdropFilter: 'blur(2px)' }}>
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-14">
             <p
@@ -253,7 +262,7 @@ export default function AboutUs({ setPage }: AboutUsProps) {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-20" style={{ backgroundColor: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(2px)' }}>
         <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-14 items-start">
           <div>
             <p

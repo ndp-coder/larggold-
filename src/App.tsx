@@ -22,6 +22,7 @@ export default function App() {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       <Header page={page} setPage={setPage} />

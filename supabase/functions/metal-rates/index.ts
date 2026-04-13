@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,8 +15,41 @@ const UPSTOX_HEADERS = {
   Accept: "application/json",
 };
 
+const CACHE_TTL_MS = 15000;
+const CACHE_KEY = "metal-rates-v1";
+
 const TROY_OZ_TO_GRAM = 31.1035;
 const TROY_OZ_TO_KG   = 32.1507;
+
+function getSupabase() {
+  return createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+}
+
+async function getCachedRates() {
+  const supabase = getSupabase();
+  const { data } = await supabase
+    .from("rates_cache")
+    .select("data, fetched_at")
+    .eq("id", CACHE_KEY)
+    .maybeSingle();
+
+  if (!data) return null;
+
+  const age = Date.now() - new Date(data.fetched_at).getTime();
+  if (age > CACHE_TTL_MS) return null;
+
+  return data.data;
+}
+
+async function setCachedRates(rates: object) {
+  const supabase = getSupabase();
+  await supabase
+    .from("rates_cache")
+    .upsert({ id: CACHE_KEY, data: rates, fetched_at: new Date().toISOString() });
+}
 
 async function fetchUsdInr(): Promise<number> {
   const urls = [
@@ -46,11 +80,11 @@ interface McxInstrument {
 }
 
 let cachedInstruments: McxInstrument[] | null = null;
-let cacheTime = 0;
+let instrumentCacheTime = 0;
 
 async function getMcxInstruments(): Promise<McxInstrument[]> {
   const now = Date.now();
-  if (cachedInstruments && now - cacheTime < 6 * 60 * 60 * 1000) {
+  if (cachedInstruments && now - instrumentCacheTime < 6 * 60 * 60 * 1000) {
     return cachedInstruments;
   }
 
@@ -61,7 +95,6 @@ async function getMcxInstruments(): Promise<McxInstrument[]> {
   if (!res.ok) throw new Error(`MCX instruments fetch failed: ${res.status}`);
 
   const buf = await res.arrayBuffer();
-
   const ds = new DecompressionStream("gzip");
   const writer = ds.writable.getWriter();
   const reader = ds.readable.getReader();
@@ -82,7 +115,7 @@ async function getMcxInstruments(): Promise<McxInstrument[]> {
 
   const text = new TextDecoder().decode(merged);
   cachedInstruments = JSON.parse(text) as McxInstrument[];
-  cacheTime = now;
+  instrumentCacheTime = now;
   return cachedInstruments;
 }
 
@@ -99,17 +132,8 @@ async function getFrontMonthKey(instruments: McxInstrument[], assetSymbol: strin
   return futures[0].instrument_key;
 }
 
-interface MetalsResult {
-  goldUsd: number; silverUsd: number;
-  goldInr: number; silverInr: number;
-  goldBid: number; goldAsk: number;
-  silverBid: number; silverAsk: number;
-  goldChange: number; silverChange: number;
-  source: string;
-}
-
-async function fetchMetalsViaUpstox(usdInr: number): Promise<MetalsResult> {
-  const instruments = await getMcxInstruments();
+async function fetchFreshRates() {
+  const [usdInr, instruments] = await Promise.all([fetchUsdInr(), getMcxInstruments()]);
 
   const [goldKey, silverKey] = await Promise.all([
     getFrontMonthKey(instruments, "GOLD"),
@@ -154,6 +178,7 @@ async function fetchMetalsViaUpstox(usdInr: number): Promise<MetalsResult> {
     silverAsk:  silverUsd * 1.001,
     goldChange:   goldChg,
     silverChange: silverChg,
+    usdInr,
     source: "upstox-mcx",
   };
 }
@@ -164,10 +189,17 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const usdInr = await fetchUsdInr();
-    const metals = await fetchMetalsViaUpstox(usdInr);
+    const cached = await getCachedRates();
+    if (cached) {
+      return new Response(JSON.stringify({ ...cached, fromCache: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-    return new Response(JSON.stringify({ ...metals, usdInr }), {
+    const rates = await fetchFreshRates();
+    EdgeRuntime.waitUntil(setCachedRates(rates));
+
+    return new Response(JSON.stringify(rates), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {

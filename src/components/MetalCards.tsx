@@ -197,10 +197,9 @@ export default function MetalCards({ rates, loading, error, priceDirection }: Pr
           </div>
         </div>
       )}
-      <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
         {loading || !rates ? (
           <>
-            <Skeleton />
             <Skeleton />
             <Skeleton />
           </>
@@ -225,16 +224,6 @@ export default function MetalCards({ rates, loading, error, priceDirection }: Pr
               change={rates.gold.change}
               direction={priceDirection.gold}
               decimals={0}
-            />
-            <Card
-              icon={<RupeeIcon />}
-              label="INR (₹)"
-              price={rates.inr.price}
-              low={rates.inr.low}
-              high={rates.inr.high}
-              change={rates.inr.change}
-              direction={priceDirection.inr}
-              decimals={3}
             />
           </>
         )}

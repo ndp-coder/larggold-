@@ -20,7 +20,7 @@ export interface PriceDirection {
 }
 
 export interface CostingRate {
-  metal: 'gold' | 'silver';
+  metal: 'gold' | 'silver' | 'inr';
   col1: number;
   col2: number;
   high: number;
@@ -104,30 +104,40 @@ function buildTableRates(
 
 // ── Costing rates builder ───────────────────────────────────────────────────
 
-const GOLD_ASK_SPREAD   = 2.0;   // INR per gram
-const SILVER_ASK_SPREAD = 50;    // INR per kg
+const GOLD_ASK_SPREAD   = 2.0;
+const SILVER_ASK_SPREAD = 50;
+
+function toUsd(inr: number, usdInr: number, dec = 2): number {
+  return Math.round((inr / usdInr) * Math.pow(10, dec)) / Math.pow(10, dec);
+}
 
 function buildCostingRates(
-  goldInr: number,   // ₹ per 10g  (MCX LTP)
-  silverInr: number, // ₹ per kg   (MCX LTP)
+  goldInr: number,
+  silverInr: number,
+  usdInr: number,
 ): CostingRate[] {
-  const g10g  = goldInr;
-  const spkg  = silverInr;
+  const g10g = goldInr;
+  const spkg = silverInr;
+
+  const goldCol1 = toUsd(g10g, usdInr);
+  const goldCol2 = toUsd(g10g + GOLD_ASK_SPREAD * 10, usdInr);
+  const goldHigh = toUsd(g10g * 1.0005, usdInr);
+  const goldLow  = toUsd(g10g * 0.9995, usdInr);
+
+  const silvCol1 = toUsd(spkg, usdInr);
+  const silvCol2 = toUsd(spkg + SILVER_ASK_SPREAD, usdInr);
+  const silvHigh = toUsd(spkg * 1.001, usdInr);
+  const silvLow  = toUsd(spkg * 0.999, usdInr);
 
   return [
+    { metal: 'gold',   col1: goldCol1, col2: goldCol2, high: goldHigh, low: goldLow },
+    { metal: 'silver', col1: silvCol1, col2: silvCol2, high: silvHigh, low: silvLow },
     {
-      metal: 'gold',
-      col1:  g10g,
-      col2:  Math.round((g10g + GOLD_ASK_SPREAD * 10) * 10) / 10,
-      high:  Math.round((g10g * 1.0005) * 10) / 10,
-      low:   Math.round((g10g * 0.9995) * 10) / 10,
-    },
-    {
-      metal: 'silver',
-      col1:  spkg,
-      col2:  spkg + SILVER_ASK_SPREAD,
-      high:  Math.round(spkg * 1.001),
-      low:   Math.round(spkg * 0.999),
+      metal: 'inr',
+      col1:  Math.round(usdInr * 1000) / 1000,
+      col2:  Math.round(usdInr * 1.0005 * 1000) / 1000,
+      high:  Math.round(usdInr * 1.001 * 1000) / 1000,
+      low:   Math.round(usdInr * 0.999 * 1000) / 1000,
     },
   ];
 }
@@ -202,7 +212,7 @@ export function useLiveRates() {
       });
 
       setTableRates(buildTableRates(raw.goldUsd, raw.silverUsd, raw.usdInr, prev?.goldUsd, prev?.silverUsd));
-      setCostingRates(buildCostingRates(raw.goldInr, raw.silverInr));
+      setCostingRates(buildCostingRates(raw.goldInr, raw.silverInr, raw.usdInr));
       setLastUpdated(new Date());
       setLoading(false);
     } catch (err) {

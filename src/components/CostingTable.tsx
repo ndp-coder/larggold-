@@ -25,6 +25,15 @@ function SilverBarIcon() {
   );
 }
 
+function InrIcon() {
+  return (
+    <svg viewBox="0 0 40 28" className="w-10 h-7" fill="none">
+      <rect x="2" y="4" width="36" height="20" rx="3" fill="#1a7f4a" stroke="#155f38" strokeWidth="1"/>
+      <text x="20" y="19" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#ffffff" fontFamily="Arial">₹/$</text>
+    </svg>
+  );
+}
+
 function SkeletonRow() {
   return (
     <tr style={{ borderBottom: '1px solid #cccccc' }} className="animate-pulse">
@@ -41,13 +50,16 @@ function SkeletonRow() {
   );
 }
 
+function fmt(val: number, metal: CostingRate['metal']): string {
+  if (metal === 'inr') return val.toFixed(3);
+  return val.toFixed(2);
+}
+
 export default function CostingTable({ rates, loading }: Props) {
   return (
     <div className="py-8 px-6 bg-white">
       <div className="max-w-4xl mx-auto">
-        {/* Outer border matching AMS */}
         <div style={{ border: '1px solid #cccccc' }}>
-          {/* COSTING header */}
           <div className="px-5 py-3" style={{ borderBottom: '1px solid #cccccc' }}>
             <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '13px', fontWeight: 900, color: '#333333', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Costing</span>
           </div>
@@ -56,6 +68,7 @@ export default function CostingTable({ rates, loading }: Props) {
             <tbody>
               {loading ? (
                 <>
+                  <SkeletonRow />
                   <SkeletonRow />
                   <SkeletonRow />
                 </>
@@ -67,31 +80,29 @@ export default function CostingTable({ rates, loading }: Props) {
                   >
                     <td className="px-5 py-4 w-44">
                       <div className="flex items-center gap-3">
-                        {r.metal === 'gold' ? <GoldBarIcon /> : <SilverBarIcon />}
+                        {r.metal === 'gold' ? <GoldBarIcon /> : r.metal === 'silver' ? <SilverBarIcon /> : <InrIcon />}
                         <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '15px', fontWeight: 900, color: '#111111', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                          {r.metal === 'gold' ? 'GOLD' : 'SILVER'}
+                          {r.metal === 'gold' ? 'GOLD' : r.metal === 'silver' ? 'SILVER' : 'INR'}
                         </span>
                       </div>
                     </td>
-                    {/* col1 */}
                     <td className="px-5 py-4 text-center">
                       <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '28px', fontWeight: 800, color: '#111111' }}>
-                        {r.col1.toLocaleString('en-IN')}
+                        {fmt(r.col1, r.metal)}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-center">
                       <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '28px', fontWeight: 800, color: '#111111' }}>
-                        {r.col2.toLocaleString('en-IN')}
+                        {fmt(r.col2, r.metal)}
                       </span>
                     </td>
-                    {/* High (green) / Low (red) */}
                     <td className="px-5 py-4 text-right">
                       <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '15px', fontWeight: 700, color: '#5CB85C' }}>
-                        {r.high.toLocaleString('en-IN')}
+                        {fmt(r.high, r.metal)}
                       </span>
                       <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '15px', fontWeight: 400, color: '#CCCCCC', margin: '0 4px' }}>/</span>
                       <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '15px', fontWeight: 700, color: '#D9534F' }}>
-                        {r.low.toLocaleString('en-IN')}
+                        {fmt(r.low, r.metal)}
                       </span>
                     </td>
                   </tr>

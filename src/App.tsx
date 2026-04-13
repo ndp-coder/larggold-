@@ -18,7 +18,7 @@ export default function App() {
     <div
       className="min-h-screen flex flex-col"
       style={{
-        backgroundImage: 'url(/Gemini_Generated_Image_pfxebwpfxebwpfxe_(1).png)',
+        backgroundImage: 'url(/bg-image.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',

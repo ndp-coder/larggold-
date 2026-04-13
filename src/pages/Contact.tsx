@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Phone, Mail, MapPin, Send, CheckCircle } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../hooks/lib/supabase';
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });

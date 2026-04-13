@@ -27,33 +27,7 @@ export interface CostingRate {
   low: number;
 }
 
-// ── Constants ──────────────────────────────────────────────────────────────
-
-const TROY_OZ_TO_GRAM = 31.1035;
-const TROY_OZ_TO_KG   = 32.1507;
-
-const CIF_GOLD   = 3.0;
-const CIF_SILVER = 0.15;
-const IMPORT_DUTY = 0.085;
-const SILVER_15KG_DISCOUNT = 300;
-
 // ── Price helpers ───────────────────────────────────────────────────────────
-
-function goldImpPerGram(goldUsd: number, usdInr: number): number {
-  return Math.round(((goldUsd + CIF_GOLD) * usdInr / TROY_OZ_TO_GRAM) * (1 + IMPORT_DUTY) * 10) / 10;
-}
-
-function goldIndPerGram(goldUsd: number, usdInr: number): number {
-  return Math.round((goldUsd * usdInr / TROY_OZ_TO_GRAM) * (1 + IMPORT_DUTY) * 10) / 10;
-}
-
-function silverPerKg(silverUsd: number, usdInr: number): number {
-  return Math.round((silverUsd + CIF_SILVER) * usdInr * TROY_OZ_TO_KG * (1 + IMPORT_DUTY));
-}
-
-function silver15kgPerKg(silverUsd: number, usdInr: number): number {
-  return silverPerKg(silverUsd, usdInr) - SILVER_15KG_DISCOUNT;
-}
 
 function getDir(next: number, prev: number): 'up' | 'down' | 'neutral' {
   if (next > prev) return 'up';
@@ -64,38 +38,37 @@ function getDir(next: number, prev: number): 'up' | 'down' | 'neutral' {
 // ── Table rates builder ─────────────────────────────────────────────────────
 
 function buildTableRates(
-  goldUsd: number, silverUsd: number, usdInr: number,
-  prevGoldUsd?: number, prevSilverUsd?: number,
+  goldInr: number, silverInr: number,
+  prevGoldInr?: number, prevSilverInr?: number,
 ): TableRate[] {
-  const today = new Date();
-  const day   = today.getDate();
-  const month = today.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+  const sDir = prevSilverInr !== undefined ? getDir(silverInr, prevSilverInr) : 'neutral';
+  const gDir = prevGoldInr   !== undefined ? getDir(goldInr,   prevGoldInr)   : 'neutral';
 
-  const sDir = prevSilverUsd !== undefined ? getDir(silverUsd, prevSilverUsd) : 'neutral';
-  const gDir = prevGoldUsd   !== undefined ? getDir(goldUsd,   prevGoldUsd)   : 'neutral';
+  const goldPrice   = Math.round(goldInr   * 1.02);
+  const silverPrice = Math.round(silverInr * 1.025);
 
   return [
     {
-      label:     `SILVER IMP ${day}-${day + 2} ${month} (ALL) 15 KG`,
-      value:     silver15kgPerKg(silverUsd, usdInr),
+      label:     'SILVER IMP (ALL) 15 KG',
+      value:     silverPrice,
       highlight: true,
       direction: sDir,
     },
     {
-      label:     `SILVER IMP ${day}-${day + 2} ${month} (ALL)`,
-      value:     silverPerKg(silverUsd, usdInr),
+      label:     'SILVER IMP (ALL)',
+      value:     silverPrice,
       highlight: true,
       direction: sDir,
     },
     {
-      label:     `GOLD 999 IMP ${day}-${day + 2} ${month} (ALL)`,
-      value:     goldImpPerGram(goldUsd, usdInr),
+      label:     'GOLD 999 IMP (ALL)',
+      value:     goldPrice,
       highlight: false,
       direction: gDir,
     },
     {
-      label:     `GOLD 999 IND ${day}-${day + 2} ${month} (ALL)`,
-      value:     goldIndPerGram(goldUsd, usdInr),
+      label:     'GOLD 999 IND (ALL)',
+      value:     goldPrice,
       highlight: false,
       direction: gDir,
     },
@@ -104,9 +77,6 @@ function buildTableRates(
 
 // ── Costing rates builder ───────────────────────────────────────────────────
 
-function toUsd(inr: number, usdInr: number, dec = 2): number {
-  return Math.round((inr / usdInr) * Math.pow(10, dec)) / Math.pow(10, dec);
-}
 
 function buildCostingRates(
   goldInr: number,
@@ -210,7 +180,7 @@ export function useLiveRates() {
         },
       });
 
-      setTableRates(buildTableRates(raw.goldUsd, raw.silverUsd, raw.usdInr, prev?.goldUsd, prev?.silverUsd));
+      setTableRates(buildTableRates(raw.goldInr, raw.silverInr, prev?.goldInr, prev?.silverInr));
       setCostingRates(buildCostingRates(raw.goldInr, raw.silverInr, raw.usdInr));
       setLastUpdated(new Date());
       setLoading(false);

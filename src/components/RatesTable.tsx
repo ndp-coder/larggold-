@@ -75,7 +75,7 @@ export default function RatesTable({ rates, lastUpdated, loading }: Props) {
           )}
         </div>
 
-        {/* Table with border like AMS Bullion */}
+        
         <div className="bg-white overflow-hidden" style={{ border: '1px solid #cccccc' }}>
           {loading ? (
             <>

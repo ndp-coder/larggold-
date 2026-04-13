@@ -15,10 +15,10 @@ function formatValue(v: number) {
 function SkeletonRow() {
   return (
     <div className="flex items-center border-b border-gray-200 animate-pulse">
-      <div className="flex-1 px-5 py-4">
+      <div className="flex-1 px-3 sm:px-5 py-3 sm:py-4">
         <div className="h-4 bg-gray-200 rounded w-3/4" />
       </div>
-      <div className="w-44 px-5 py-4 text-right">
+      <div className="w-28 sm:w-44 px-3 sm:px-5 py-3 sm:py-4 text-right">
         <div className="h-7 bg-gray-200 rounded" />
       </div>
     </div>
@@ -47,8 +47,8 @@ function FlashCell({
   return (
     <div
       ref={ref}
-      className="w-44 px-5 py-4 text-right"
-      style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '28px', fontWeight: 800, color: '#111111' }}
+      className="w-28 sm:w-44 px-3 sm:px-5 py-3 sm:py-4 text-right"
+      style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 800, color: '#111111' }}
     >
       {formatValue(value)}
     </div>
@@ -57,7 +57,7 @@ function FlashCell({
 
 export default function RatesTable({ rates, lastUpdated, loading }: Props) {
   return (
-    <div className="px-6 pb-10">
+    <div className="px-3 sm:px-6 pb-10">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -86,8 +86,8 @@ export default function RatesTable({ rates, lastUpdated, loading }: Props) {
                 style={{ borderBottom: i < rates.length - 1 ? '1px solid #cccccc' : 'none' }}
               >
                 <div
-                  className="flex-1 px-5 py-4 uppercase"
-                  style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '13px', fontWeight: 700, color: '#333333', letterSpacing: '0.04em' }}
+                  className="flex-1 px-3 sm:px-5 py-3 sm:py-4 uppercase"
+                  style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(10px, 2.5vw, 13px)', fontWeight: 700, color: '#333333', letterSpacing: '0.04em' }}
                 >
                   {rate.label}
                 </div>

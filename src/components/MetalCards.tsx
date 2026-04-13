@@ -127,7 +127,7 @@ function FlashPrice({
     : price.toFixed(decimals);
 
   return (
-    <div ref={ref} className="rounded px-1 transition-colors" style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '32px', fontWeight: 800, color: '#000000', lineHeight: 1.1 }}>
+    <div ref={ref} className="rounded px-1 transition-colors" style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(22px, 5vw, 32px)', fontWeight: 800, color: '#000000', lineHeight: 1.1 }}>
       {formatted}
     </div>
   );
@@ -154,7 +154,7 @@ function Card({
 }) {
   const up = change >= 0;
   return (
-    <div className="rounded p-4 flex items-start gap-3 border border-white/30" style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(8px)' }}>
+    <div className="rounded p-3 sm:p-4 flex items-start gap-2 sm:gap-3 border border-white/30" style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(8px)' }}>
       {icon}
       <div className="min-w-0">
         <div style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '14px', fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{label}</div>
@@ -185,7 +185,7 @@ function Card({
 
 export default function MetalCards({ rates, loading, error, priceDirection }: Props) {
   return (
-    <div className="py-10 px-6">
+    <div className="py-6 sm:py-10 px-3 sm:px-6">
       {error && (
         <div className="max-w-4xl mx-auto mb-4">
           <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded px-4 py-2 flex items-center gap-2">

@@ -70,7 +70,7 @@ export default function Contact() {
         className="relative py-24 text-white"
         style={{
           background:
-            'linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.82)), url("https://images.pexels.com/photos/3943716/pexels-photo-3943716.jpeg?auto=compress&cs=tinysrgb&w=1200") center/cover no-repeat',
+            'linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.82)), url("https://bolt.new/api/upload/files%2F6010405-2026-04-14T11-57-33-543Z-files_6010405-2026-04-14T11-48-41-726Z-image.png?projectId=65593657") center/cover no-repeat',
         }}
       >
         <div className="max-w-4xl mx-auto px-4 text-center">

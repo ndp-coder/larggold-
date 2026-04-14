@@ -118,11 +118,11 @@ export default function MetalCards({ rates, loading, error, priceDirection }: Pr
                 <tr key={i} className="animate-pulse">
                   {[0, 1, 2].map((j) => (
                     <td key={j} className="py-4 px-2 sm:px-4">
-                      <div className="h-4 bg-gray-200 rounded mx-auto" style={{ width: j === 0 ? '80px' : '60px' }} />
+                      <div className="h-4 bg-white/10 rounded mx-auto" style={{ width: j === 0 ? '80px' : '60px' }} />
                     </td>
                   ))}
-                  <td className="py-4 px-4 hidden sm:table-cell"><div className="h-4 bg-gray-200 rounded mx-auto w-16" /></td>
-                  <td className="py-4 px-4 hidden sm:table-cell"><div className="h-4 bg-gray-200 rounded mx-auto w-16" /></td>
+                  <td className="py-4 px-4 hidden sm:table-cell"><div className="h-4 bg-white/10 rounded mx-auto w-16" /></td>
+                  <td className="py-4 px-4 hidden sm:table-cell"><div className="h-4 bg-white/10 rounded mx-auto w-16" /></td>
                 </tr>
               ))
             ) : (
@@ -137,7 +137,7 @@ export default function MetalCards({ rates, loading, error, priceDirection }: Pr
                     <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
                       <div className="flex flex-col items-center gap-1">
                         <img src={row.img} alt={row.label} className="hidden md:block w-14 h-10 object-cover rounded flex-shrink-0" />
-                        <div style={{ ...font, fontSize: '12px', fontWeight: 700, color: '#000000' }}>{row.label}</div>
+                        <div style={{ ...font, fontSize: '12px', fontWeight: 700, color: '#ffffff' }}>{row.label}</div>
                         <div style={{ ...font, fontSize: '10px', fontWeight: 500, color: 'rgba(255,255,255,0.55)' }}>{row.unit}</div>
                       </div>
                     </td>
@@ -147,16 +147,16 @@ export default function MetalCards({ rates, loading, error, priceDirection }: Pr
                     <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
                       <div
                         className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full"
-                        style={{ background: up ? '#e8f8e8' : '#fdeaea', ...font, fontSize: '11px', fontWeight: 700, color: up ? '#2e8b2e' : '#c0392b' }}
+                        style={{ background: up ? 'rgba(46,139,46,0.15)' : 'rgba(192,57,43,0.15)', ...font, fontSize: '11px', fontWeight: 700, color: up ? '#5CB85C' : '#D9534F' }}
                       >
                         {up ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
                         {Math.abs(row.change).toFixed(2)}%
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-center hidden sm:table-cell" style={{ ...font, fontSize: '14px', fontWeight: 700, color: '#c0392b' }}>
+                    <td className="py-4 px-4 text-center hidden sm:table-cell" style={{ ...font, fontSize: '14px', fontWeight: 700, color: '#D9534F' }}>
                       {row.decimals === 0 ? row.low.toLocaleString('en-IN') : row.low.toFixed(row.decimals)}
                     </td>
-                    <td className="py-4 px-4 text-center hidden sm:table-cell" style={{ ...font, fontSize: '14px', fontWeight: 700, color: '#2e8b2e' }}>
+                    <td className="py-4 px-4 text-center hidden sm:table-cell" style={{ ...font, fontSize: '14px', fontWeight: 700, color: '#5CB85C' }}>
                       {row.decimals === 0 ? row.high.toLocaleString('en-IN') : row.high.toFixed(row.decimals)}
                     </td>
                   </tr>

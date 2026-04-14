@@ -14,12 +14,12 @@ function formatValue(v: number) {
 
 function SkeletonRow() {
   return (
-    <div className="flex items-center border-b border-gray-200 animate-pulse">
+    <div className="flex items-center border-b border-white/10 animate-pulse">
       <div className="flex-1 px-3 sm:px-5 py-3 sm:py-4 flex items-center gap-3">
-        <div className="h-4 bg-gray-200 rounded w-3/4" />
+        <div className="h-4 bg-white/10 rounded w-3/4" />
       </div>
       <div className="w-28 sm:w-44 px-3 sm:px-5 py-3 sm:py-4 text-right">
-        <div className="h-7 bg-gray-200 rounded" />
+        <div className="h-7 bg-white/10 rounded" />
       </div>
     </div>
   );

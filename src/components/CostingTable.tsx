@@ -41,13 +41,13 @@ function SkeletonRow() {
     <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} className="animate-pulse">
       <td className="px-3 sm:px-5 py-3 sm:py-4">
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="w-8 h-6 sm:w-10 sm:h-7 bg-gray-200 rounded" />
-          <div className="h-4 bg-gray-200 rounded w-12 sm:w-16" />
+          <div className="w-8 h-6 sm:w-10 sm:h-7 bg-white/10 rounded" />
+          <div className="h-4 bg-white/10 rounded w-12 sm:w-16" />
         </div>
       </td>
-      <td className="px-2 sm:px-5 py-3 sm:py-4"><div className="h-7 bg-gray-200 rounded mx-auto w-20 sm:w-28" /></td>
-      <td className="px-2 sm:px-5 py-3 sm:py-4"><div className="h-7 bg-gray-200 rounded mx-auto w-20 sm:w-28" /></td>
-      <td className="px-2 sm:px-5 py-3 sm:py-4 hidden sm:table-cell"><div className="h-5 bg-gray-200 rounded ml-auto w-28" /></td>
+      <td className="px-2 sm:px-5 py-3 sm:py-4"><div className="h-7 bg-white/10 rounded mx-auto w-20 sm:w-28" /></td>
+      <td className="px-2 sm:px-5 py-3 sm:py-4"><div className="h-7 bg-white/10 rounded mx-auto w-20 sm:w-28" /></td>
+      <td className="px-2 sm:px-5 py-3 sm:py-4 hidden sm:table-cell"><div className="h-5 bg-white/10 rounded ml-auto w-28" /></td>
     </tr>
   );
 }

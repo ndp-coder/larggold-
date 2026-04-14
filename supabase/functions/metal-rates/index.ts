@@ -116,6 +116,23 @@ function getFrontMonthKey(instruments: McxInstrument[], segment: string, symbol:
   return futures[0].instrument_key;
 }
 
+async function fetchUsdInrFreeApi(): Promise<number> {
+  const urls = [
+    "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json",
+    "https://latest.currency-api.pages.dev/v1/currencies/usd.min.json",
+  ];
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
+      if (!res.ok) continue;
+      const data = await res.json();
+      const rate = data?.usd?.inr;
+      if (typeof rate === "number" && rate > 50) return rate;
+    } catch { /* try next */ }
+  }
+  throw new Error("USD/INR free API unavailable");
+}
+
 function getNextMarketOpen(): string {
   const now = new Date();
   const IST_OFFSET = 5.5 * 60 * 60 * 1000;
@@ -163,9 +180,16 @@ async function fetchFreshRates() {
 
   const goldKey   = getFrontMonthKey(instruments, "MCX_FO", "GOLD");
   const silverKey = getFrontMonthKey(instruments, "MCX_FO", "SILVER");
-  const usdinrKey = getFrontMonthKey(instruments, "NCD_FO", "USDINR");
 
-  const ltpUrl = `https://api.upstox.com/v3/market-quote/ltp?instrument_key=${encodeURIComponent(goldKey)},${encodeURIComponent(silverKey)},${encodeURIComponent(usdinrKey)}`;
+  let usdinrKey: string | null = null;
+  try {
+    usdinrKey = getFrontMonthKey(instruments, "NCD_FO", "USDINR");
+  } catch { /* no active USDINR contract */ }
+
+  const instrumentKeys = [goldKey, silverKey];
+  if (usdinrKey) instrumentKeys.push(usdinrKey);
+
+  const ltpUrl = `https://api.upstox.com/v3/market-quote/ltp?instrument_key=${instrumentKeys.map(encodeURIComponent).join(",")}`;
   const ltpRes = await fetch(ltpUrl, { headers: UPSTOX_HEADERS, signal: AbortSignal.timeout(5000) });
   if (!ltpRes.ok) throw new Error(`LTP fetch failed: ${ltpRes.status}`);
   const ltpData = await ltpRes.json();
@@ -176,22 +200,29 @@ async function fetchFreshRates() {
 
   const goldEntry   = entries.find((e) => e.instrument_token === goldKey);
   const silverEntry = entries.find((e) => e.instrument_token === silverKey);
-  const usdinrEntry = entries.find((e) => e.instrument_token === usdinrKey);
+  const usdinrEntry = usdinrKey ? entries.find((e) => e.instrument_token === usdinrKey) : null;
 
   if (!goldEntry || !silverEntry) throw new Error("LTP data missing for GOLD or SILVER");
-  if (!usdinrEntry) throw new Error("LTP data missing for USDINR");
 
   const goldLtp   = Number(goldEntry.last_price);
   const silverLtp = Number(silverEntry.last_price);
   const goldCp    = Number(goldEntry.cp);
   const silverCp  = Number(silverEntry.cp);
-  const usdinrLtp = Number(usdinrEntry.last_price);
-  const usdinrCp  = Number(usdinrEntry.cp);
+  const usdinrLtp = usdinrEntry ? Number(usdinrEntry.last_price) : 0;
+  const usdinrCp  = usdinrEntry ? Number(usdinrEntry.cp) : 0;
 
   if (!goldLtp || !silverLtp) throw new Error("Zero LTP — market is closed");
-  if (!usdinrLtp) throw new Error("Zero USDINR LTP — currency market is closed");
 
-  const usdInr = usdinrLtp;
+  let usdInr: number;
+  let inrSource: string;
+
+  if (usdinrLtp > 0) {
+    usdInr = usdinrLtp;
+    inrSource = "upstox-ncd";
+  } else {
+    usdInr = await fetchUsdInrFreeApi();
+    inrSource = "free-api-fallback";
+  }
 
   const goldUsd   = (goldLtp   / 10 / usdInr) * TROY_OZ_TO_GRAM;
   const silverUsd = (silverLtp      / usdInr)  / TROY_OZ_TO_KG;
@@ -214,6 +245,7 @@ async function fetchFreshRates() {
     usdInr,
     usdInrChange: usdinrChg,
     usdInrCp: usdinrCp,
+    inrSource,
     source: "upstox-mcx",
   };
 }

@@ -203,7 +203,7 @@ export function useLiveRates() {
 
   useEffect(() => {
     update();
-    const interval = setInterval(update, 10000);
+    const interval = setInterval(update, 15000);
     return () => clearInterval(interval);
   }, []);
 

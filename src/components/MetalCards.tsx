@@ -137,7 +137,7 @@ export default function MetalCards({ rates, loading, error, priceDirection }: Pr
                     <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
                       <div className="flex flex-col items-center gap-1">
                         <img src={row.img} alt={row.label} className="hidden md:block w-14 h-10 object-cover rounded flex-shrink-0" />
-                        <div style={{ ...font, fontSize: '12px', fontWeight: 700, color: '#ffffff' }}>{row.label}</div>
+                        <div style={{ ...font, fontSize: '12px', fontWeight: 700, color: '#000000' }}>{row.label}</div>
                         <div style={{ ...font, fontSize: '10px', fontWeight: 500, color: 'rgba(255,255,255,0.55)' }}>{row.unit}</div>
                       </div>
                     </td>

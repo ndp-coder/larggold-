@@ -81,32 +81,28 @@ function buildTableRates(
 
 
 function buildCostingRates(
-  goldUsd: number,
-  silverUsd: number,
+  goldInr: number,
+  silverInr: number,
   usdInr: number,
-  goldBid: number,
-  goldAsk: number,
-  silverBid: number,
-  silverAsk: number,
 ): CostingRate[] {
   return [
     {
       metal: 'gold',
-      col1:  Math.round(goldBid * 100) / 100,
-      col2:  Math.round(goldAsk * 100) / 100,
-      high:  Math.round(goldAsk * 100) / 100,
-      low:   Math.round(goldBid * 100) / 100,
-      unit:  '/oz',
-      currency: '$',
+      col1:  goldInr,
+      col2:  goldInr,
+      high:  goldInr,
+      low:   goldInr,
+      unit:  '/10g',
+      currency: '₹',
     },
     {
       metal: 'silver',
-      col1:  Math.round(silverBid * 100) / 100,
-      col2:  Math.round(silverAsk * 100) / 100,
-      high:  Math.round(silverAsk * 100) / 100,
-      low:   Math.round(silverBid * 100) / 100,
-      unit:  '/oz',
-      currency: '$',
+      col1:  silverInr,
+      col2:  silverInr,
+      high:  silverInr,
+      low:   silverInr,
+      unit:  '/kg',
+      currency: '₹',
     },
     {
       metal: 'inr',
@@ -199,7 +195,7 @@ export function useLiveRates() {
       });
 
       setTableRates(buildTableRates(raw.goldInr, raw.silverInr, prev?.goldInr, prev?.silverInr));
-      setCostingRates(buildCostingRates(raw.goldUsd, raw.silverUsd, raw.usdInr, raw.goldBid, raw.goldAsk, raw.silverBid, raw.silverAsk));
+      setCostingRates(buildCostingRates(raw.goldInr, raw.silverInr, raw.usdInr));
       setLastUpdated(new Date());
       setLoading(false);
     } catch (err) {

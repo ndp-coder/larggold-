@@ -54,7 +54,6 @@ function SkeletonRow() {
 
 function fmt(val: number, r: CostingRate): string {
   if (r.metal === 'inr') return val.toFixed(3);
-  if (r.currency === '$') return val.toFixed(2);
   return Math.round(val).toLocaleString('en-IN');
 }
 
@@ -92,23 +91,23 @@ export default function CostingTable({ rates, loading }: Props) {
                       </td>
                       <td className="px-2 sm:px-5 py-3 sm:py-4 text-center">
                         <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 600, color: '#ffffff' }}>
-                          {r.currency === '$' ? '$' : ''}{fmt(r.col1, r)}
+                          {r.currency ?? ''}{fmt(r.col1, r)}
                           {r.unit && <span style={{ fontSize: 'clamp(10px, 2vw, 14px)', fontWeight: 400, color: 'rgba(255,255,255,0.5)', marginLeft: '2px' }}>{r.unit}</span>}
                         </span>
                       </td>
                       <td className="px-2 sm:px-5 py-3 sm:py-4 text-center">
                         <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 600, color: '#ffffff' }}>
-                          {r.currency === '$' ? '$' : ''}{fmt(r.col2, r)}
+                          {r.currency ?? ''}{fmt(r.col2, r)}
                           {r.unit && <span style={{ fontSize: 'clamp(10px, 2vw, 14px)', fontWeight: 400, color: 'rgba(255,255,255,0.5)', marginLeft: '2px' }}>{r.unit}</span>}
                         </span>
                       </td>
                       <td className="px-2 sm:px-5 py-3 sm:py-4 text-right hidden sm:table-cell">
                         <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '15px', fontWeight: 700, color: '#5CB85C' }}>
-                          {r.currency === '$' ? '$' : ''}{fmt(r.high, r)}
+                          {r.currency ?? ''}{fmt(r.high, r)}
                         </span>
                         <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '15px', fontWeight: 400, color: '#CCCCCC', margin: '0 4px' }}>/</span>
                         <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '15px', fontWeight: 700, color: '#D9534F' }}>
-                          {r.currency === '$' ? '$' : ''}{fmt(r.low, r)}
+                          {r.currency ?? ''}{fmt(r.low, r)}
                         </span>
                       </td>
                     </tr>

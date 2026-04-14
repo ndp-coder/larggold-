@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import MetalCards from './components/MetalCards';
 import RatesTable from './components/RatesTable';
@@ -8,13 +8,30 @@ import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import { useLiveRates } from './hooks/useLiveRates';
+import { supabase } from './hooks/lib/supabase';
 const bgImg = '/files_6010405-2026-04-14T11-02-56-013Z-image.png';
 
 export type Page = 'home' | 'about' | 'contact' | 'login';
 
 export default function App() {
   const [page, setPage] = useState<Page>('home');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { metalRates, priceDirection, tableRates, costingRates, lastUpdated, loading, error, marketClosed, nextMarketOpen } = useLiveRates();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+  };
 
   return (
     <div
@@ -29,7 +46,7 @@ export default function App() {
           backgroundColor: '#002a0a',
           }}
     >
-      <Header page={page} setPage={setPage} />
+      <Header page={page} setPage={setPage} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       {page === 'home' && (
         <main className="flex-1" id="rates">
           {marketClosed && (
@@ -67,7 +84,7 @@ export default function App() {
       {page === 'contact' && <div className="flex-1"><Contact /></div>}
       {page === 'login' && (
         <div className="flex-1">
-          <Login onClose={() => setPage('home')} onLoggedIn={() => setPage('home')} />
+          <Login onClose={() => setPage('home')} onLoggedIn={() => { setIsLoggedIn(true); setPage('home'); }} />
         </div>
       )}
       {page !== 'login' && <Footer setPage={setPage} />}

@@ -6,9 +6,11 @@ const logoImg = '/files_6010405-2026-04-14T11-02-56-013Z-image.png';
 interface HeaderProps {
   page: Page;
   setPage: (p: Page) => void;
+  isLoggedIn: boolean;
+  onLogout: () => void;
 }
 
-export default function Header({ page, setPage }: HeaderProps) {
+export default function Header({ page, setPage, isLoggedIn, onLogout }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navigate = (p: Page) => {
@@ -59,15 +61,27 @@ export default function Header({ page, setPage }: HeaderProps) {
                 {label}
               </button>
             ))}
-            <button
-              onClick={() => navigate('login')}
-              className="border-2 px-6 py-2 text-sm font-semibold transition-colors rounded-sm font-montserrat"
-              style={{ borderColor: '#fcc201', color: '#fcc201' }}
-              onMouseEnter={e => { (e.target as HTMLElement).style.background = '#fcc201'; (e.target as HTMLElement).style.color = '#111'; }}
-              onMouseLeave={e => { (e.target as HTMLElement).style.background = 'transparent'; (e.target as HTMLElement).style.color = '#fcc201'; }}
-            >
-              Login
-            </button>
+            {isLoggedIn ? (
+              <button
+                onClick={() => { onLogout(); setMenuOpen(false); }}
+                className="border-2 px-6 py-2 text-sm font-semibold transition-colors rounded-sm font-montserrat"
+                style={{ borderColor: '#E30613', color: '#E30613' }}
+                onMouseEnter={e => { (e.target as HTMLElement).style.background = '#E30613'; (e.target as HTMLElement).style.color = '#fff'; }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.background = 'transparent'; (e.target as HTMLElement).style.color = '#E30613'; }}
+              >
+                Logout
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('login')}
+                className="border-2 px-6 py-2 text-sm font-semibold transition-colors rounded-sm font-montserrat"
+                style={{ borderColor: '#fcc201', color: '#fcc201' }}
+                onMouseEnter={e => { (e.target as HTMLElement).style.background = '#fcc201'; (e.target as HTMLElement).style.color = '#111'; }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.background = 'transparent'; (e.target as HTMLElement).style.color = '#fcc201'; }}
+              >
+                Login
+              </button>
+            )}
           </nav>
 
           <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)} style={{ color: 'white' }}>
@@ -87,7 +101,11 @@ export default function Header({ page, setPage }: HeaderProps) {
                 {label}
               </button>
             ))}
-            <button onClick={() => navigate('login')} className="border-2 px-6 py-2 text-sm font-semibold w-fit font-montserrat" style={{ borderColor: '#fcc201', color: '#fcc201' }}>Login</button>
+            {isLoggedIn ? (
+              <button onClick={() => { onLogout(); setMenuOpen(false); }} className="border-2 px-6 py-2 text-sm font-semibold w-fit font-montserrat" style={{ borderColor: '#E30613', color: '#E30613' }}>Logout</button>
+            ) : (
+              <button onClick={() => navigate('login')} className="border-2 px-6 py-2 text-sm font-semibold w-fit font-montserrat" style={{ borderColor: '#fcc201', color: '#fcc201' }}>Login</button>
+            )}
           </div>
         )}
       </div>

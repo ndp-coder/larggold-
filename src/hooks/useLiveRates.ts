@@ -25,6 +25,8 @@ export interface CostingRate {
   col2: number;
   high: number;
   low: number;
+  unit?: string;
+  currency?: string;
 }
 
 // ── Price helpers ───────────────────────────────────────────────────────────
@@ -79,27 +81,31 @@ function buildTableRates(
 
 
 function buildCostingRates(
-  goldInr: number,
-  silverInr: number,
+  goldUsd: number,
+  silverUsd: number,
   usdInr: number,
 ): CostingRate[] {
-  const goldWithPremium   = Math.round(((goldInr   * 1.02)));
-  const silverWithPremium = Math.round(((silverInr * 1.025)));
+  const goldWithPremium   = Math.round(goldUsd * 1.02 * 100) / 100;
+  const silverWithPremium = Math.round(silverUsd * 1.025 * 100) / 100;
 
   return [
     {
       metal: 'gold',
-      col1:  Math.round(goldInr),
+      col1:  Math.round(goldUsd * 100) / 100,
       col2:  goldWithPremium,
-      high:  Math.round(goldWithPremium   * 1.001),
-      low:   Math.round(goldWithPremium   * 0.999),
+      high:  Math.round(goldWithPremium * 1.001 * 100) / 100,
+      low:   Math.round(goldWithPremium * 0.999 * 100) / 100,
+      unit:  '/oz',
+      currency: '$',
     },
     {
       metal: 'silver',
-      col1:  Math.round(silverInr),
+      col1:  Math.round(silverUsd * 100) / 100,
       col2:  silverWithPremium,
-      high:  Math.round(silverWithPremium * 1.001),
-      low:   Math.round(silverWithPremium * 0.999),
+      high:  Math.round(silverWithPremium * 1.001 * 100) / 100,
+      low:   Math.round(silverWithPremium * 0.999 * 100) / 100,
+      unit:  '/oz',
+      currency: '$',
     },
     {
       metal: 'inr',
@@ -107,6 +113,7 @@ function buildCostingRates(
       col2:  Math.round(usdInr * 1.0005 * 1000) / 1000,
       high:  Math.round(usdInr * 1.001 * 1000) / 1000,
       low:   Math.round(usdInr * 0.999 * 1000) / 1000,
+      currency: '₹',
     },
   ];
 }
@@ -191,7 +198,7 @@ export function useLiveRates() {
       });
 
       setTableRates(buildTableRates(raw.goldInr, raw.silverInr, prev?.goldInr, prev?.silverInr));
-      setCostingRates(buildCostingRates(raw.goldInr, raw.silverInr, raw.usdInr));
+      setCostingRates(buildCostingRates(raw.goldUsd, raw.silverUsd, raw.usdInr));
       setLastUpdated(new Date());
       setLoading(false);
     } catch (err) {

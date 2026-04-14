@@ -26,6 +26,10 @@ export default function Contact() {
     if (dbError) {
       setError('Something went wrong. Please try again.');
     } else {
+      const waMsg = encodeURIComponent(
+        `New Contact from Larg Gold Website\n\nName: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone || 'N/A'}\nMessage: ${form.message}`
+      );
+      window.open(`https://wa.me/919581366889?text=${waMsg}`, '_blank');
       setSubmitted(true);
     }
   };
@@ -34,8 +38,8 @@ export default function Contact() {
     {
       icon: Phone,
       label: 'Phone',
-      value: '+91 8184839498',
-      href: 'tel:+918184839498',
+      value: '+91 9581366889',
+      href: 'tel:+919581366889',
     },
     {
       icon: Mail,
@@ -55,7 +59,7 @@ export default function Contact() {
     <main
       className="min-h-screen"
       style={{
-        backgroundImage: 'url(/Gemini_Generated_Image_pfxebwpfxebwpfxe_(1).png)',
+        backgroundImage: 'url(/Gemini_Generated_Image_pfxebwpfxebwpfxe_%281%29.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',

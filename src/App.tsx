@@ -6,9 +6,11 @@ import CostingTable from './components/CostingTable';
 import Footer from './components/Footer';
 import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
+import Login from './pages/Login';
 import { useLiveRates } from './hooks/useLiveRates';
+const bgImg = '/files_6010405-2026-04-14T11-02-56-013Z-image.png';
 
-export type Page = 'home' | 'about' | 'contact';
+export type Page = 'home' | 'about' | 'contact' | 'login';
 
 export default function App() {
   const [page, setPage] = useState<Page>('home');
@@ -16,13 +18,15 @@ export default function App() {
 
   return (
     <div
-      className="min-h-screen flex flex-col"
-      style={{ 
+      className="min-h-screen flex flex-col relative"
+      style={{
           minHeight: '100vh',
-          backgroundImage: 'url(/bg-image.png)',
+          backgroundImage: `url(${bgImg})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'center center',
           backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed',
+          backgroundColor: '#002a0a',
           }}
     >
       <Header page={page} setPage={setPage} />
@@ -61,7 +65,12 @@ export default function App() {
       )}
       {page === 'about' && <div className="flex-1"><AboutUs setPage={setPage} /></div>}
       {page === 'contact' && <div className="flex-1"><Contact /></div>}
-      <Footer setPage={setPage} />
+      {page === 'login' && (
+        <div className="flex-1">
+          <Login onClose={() => setPage('home')} onLoggedIn={() => setPage('home')} />
+        </div>
+      )}
+      {page !== 'login' && <Footer setPage={setPage} />}
     </div>
   );
 }

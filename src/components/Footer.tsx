@@ -34,7 +34,7 @@ export default function Footer({ setPage }: FooterProps) {
             <h3 className="font-bold text-base mb-4 tracking-wide font-montserrat">Customer Support</h3>
             <div className="flex items-center gap-2 text-sm text-gray-300 mb-2 font-opensans">
               <Phone size={14} className="flex-shrink-0" style={{ color: '#fcc201' }} />
-              <span>+91 8184839498</span>
+              <span>+91 9581366889</span>
             </div>
             <div className="text-sm text-gray-300 font-opensans">larggold@gmail.com</div>
           </div>
@@ -77,7 +77,7 @@ export default function Footer({ setPage }: FooterProps) {
 
         <div className="border-t border-gray-700 mt-10 pt-8 text-center">
           <p className="text-sm font-bold tracking-widest text-white mb-4 uppercase font-montserrat">
-            Larg Gold Private Limited
+            Larg Gold 
           </p>
           <div className="flex justify-center gap-6 mb-4">
             <button

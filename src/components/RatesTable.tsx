@@ -15,7 +15,7 @@ function formatValue(v: number) {
 function SkeletonRow() {
   return (
     <div className="flex items-center border-b border-gray-200 animate-pulse">
-      <div className="flex-1 px-3 sm:px-5 py-3 sm:py-4">
+      <div className="flex-1 px-3 sm:px-5 py-3 sm:py-4 flex items-center gap-3">
         <div className="h-4 bg-gray-200 rounded w-3/4" />
       </div>
       <div className="w-28 sm:w-44 px-3 sm:px-5 py-3 sm:py-4 text-right">
@@ -30,7 +30,6 @@ function FlashCell({
   direction,
 }: {
   value: number;
-  highlight?: boolean;
   direction?: 'up' | 'down' | 'neutral';
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -48,7 +47,7 @@ function FlashCell({
     <div
       ref={ref}
       className="w-28 sm:w-44 px-3 sm:px-5 py-3 sm:py-4 text-right"
-      style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 800, color: '#111111' }}
+      style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 800, color: '#ffffff' }}
     >
       {formatValue(value)}
     </div>
@@ -72,28 +71,29 @@ export default function RatesTable({ rates, lastUpdated, loading }: Props) {
           )}
         </div>
 
-        
-        <div className="overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(8px)' }}>
+        <div className="overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(0,0,0,0.03)', backdropFilter: 'blur(8px)' }}>
           {loading ? (
             <>
               {[...Array(7)].map((_, i) => <SkeletonRow key={i} />)}
             </>
           ) : (
-            rates.map((rate, i) => (
-              <div
-                key={i}
-                className="flex items-center"
-                style={{ borderBottom: i < rates.length - 1 ? '1px solid #cccccc' : 'none' }}
-              >
+            rates.map((rate, i) => {
+              return (
                 <div
-                  className="flex-1 px-3 sm:px-5 py-3 sm:py-4 uppercase"
-                  style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(10px, 2.5vw, 13px)', fontWeight: 700, color: '#333333', letterSpacing: '0.04em' }}
+                  key={i}
+                  className="flex items-center"
+                  style={{ borderBottom: i < rates.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none' }}
                 >
-                  {rate.label}
+                  <div
+                    className="flex-1 px-3 sm:px-5 py-3 sm:py-4 flex items-center uppercase"
+                    style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(10px, 2.5vw, 13px)', fontWeight: 700, color: 'rgba(255,255,255,0.85)', letterSpacing: '0.04em' }}
+                  >
+                    {rate.label}
+                  </div>
+                  <FlashCell value={rate.value} direction={rate.direction} />
                 </div>
-                <FlashCell value={rate.value} direction={rate.direction} />
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>

@@ -55,7 +55,7 @@ export default function AboutUs({ setPage }: AboutUsProps) {
       <section
         className="relative py-28 text-white"
         style={{
-          background: 'linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url("https://images.pexels.com/photos/3943716/pexels-photo-3943716.jpeg?auto=compress&cs=tinysrgb&w=1200") center/cover no-repeat',
+          background: 'linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url("https://bolt.new/api/upload/files%2F6010405-2026-04-14T11-57-33-543Z-files_6010405-2026-04-14T11-48-41-726Z-image.png?projectId=65593657") center/cover no-repeat',
         }}
       >
         <div className="max-w-4xl mx-auto px-4 text-center">
@@ -190,7 +190,7 @@ export default function AboutUs({ setPage }: AboutUsProps) {
       <section
         className="py-20 text-white relative"
         style={{
-          background: 'linear-gradient(rgba(0,0,0,0.82), rgba(0,0,0,0.88)), url("https://images.pexels.com/photos/3944405/pexels-photo-3944405.jpeg?auto=compress&cs=tinysrgb&w=1200") center/cover no-repeat',
+          background: 'linear-gradient(rgba(0,0,0,0.82), rgba(0,0,0,0.88)), url("https://bolt.new/api/upload/files%2F6010405-2026-04-14T11-57-33-543Z-files_6010405-2026-04-14T11-48-41-726Z-image.png?projectId=65593657") center/cover no-repeat',
         }}
       >
         <div className="max-w-3xl mx-auto px-4 text-center">

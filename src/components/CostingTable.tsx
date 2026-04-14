@@ -90,12 +90,12 @@ export default function CostingTable({ rates, loading }: Props) {
                         </div>
                       </td>
                       <td className="px-2 sm:px-5 py-3 sm:py-4 text-center">
-                        <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 800, color: '#ffffff' }}>
+                        <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 600, color: '#ffffff' }}>
                           {fmt(r.col1, r.metal)}
                         </span>
                       </td>
                       <td className="px-2 sm:px-5 py-3 sm:py-4 text-center">
-                        <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 800, color: '#ffffff' }}>
+                        <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 600, color: '#ffffff' }}>
                           {fmt(r.col2, r.metal)}
                         </span>
                       </td>

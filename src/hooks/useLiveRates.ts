@@ -84,35 +84,36 @@ function buildCostingRates(
   goldUsd: number,
   silverUsd: number,
   usdInr: number,
+  goldBid: number,
+  goldAsk: number,
+  silverBid: number,
+  silverAsk: number,
 ): CostingRate[] {
-  const goldWithPremium   = Math.round(goldUsd * 1.02 * 100) / 100;
-  const silverWithPremium = Math.round(silverUsd * 1.025 * 100) / 100;
-
   return [
     {
       metal: 'gold',
-      col1:  Math.round(goldUsd * 100) / 100,
-      col2:  goldWithPremium,
-      high:  Math.round(goldWithPremium * 1.001 * 100) / 100,
-      low:   Math.round(goldWithPremium * 0.999 * 100) / 100,
+      col1:  Math.round(goldBid * 100) / 100,
+      col2:  Math.round(goldAsk * 100) / 100,
+      high:  Math.round(goldAsk * 100) / 100,
+      low:   Math.round(goldBid * 100) / 100,
       unit:  '/oz',
       currency: '$',
     },
     {
       metal: 'silver',
-      col1:  Math.round(silverUsd * 100) / 100,
-      col2:  silverWithPremium,
-      high:  Math.round(silverWithPremium * 1.001 * 100) / 100,
-      low:   Math.round(silverWithPremium * 0.999 * 100) / 100,
+      col1:  Math.round(silverBid * 100) / 100,
+      col2:  Math.round(silverAsk * 100) / 100,
+      high:  Math.round(silverAsk * 100) / 100,
+      low:   Math.round(silverBid * 100) / 100,
       unit:  '/oz',
       currency: '$',
     },
     {
       metal: 'inr',
       col1:  Math.round(usdInr * 1000) / 1000,
-      col2:  Math.round(usdInr * 1.0005 * 1000) / 1000,
-      high:  Math.round(usdInr * 1.001 * 1000) / 1000,
-      low:   Math.round(usdInr * 0.999 * 1000) / 1000,
+      col2:  Math.round(usdInr * 1000) / 1000,
+      high:  Math.round(usdInr * 1000) / 1000,
+      low:   Math.round(usdInr * 1000) / 1000,
       currency: '₹',
     },
   ];
@@ -198,7 +199,7 @@ export function useLiveRates() {
       });
 
       setTableRates(buildTableRates(raw.goldInr, raw.silverInr, prev?.goldInr, prev?.silverInr));
-      setCostingRates(buildCostingRates(raw.goldUsd, raw.silverUsd, raw.usdInr));
+      setCostingRates(buildCostingRates(raw.goldUsd, raw.silverUsd, raw.usdInr, raw.goldBid, raw.goldAsk, raw.silverBid, raw.silverAsk));
       setLastUpdated(new Date());
       setLoading(false);
     } catch (err) {

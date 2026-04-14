@@ -47,7 +47,7 @@ function FlashCell({
     <div
       ref={ref}
       className="w-28 sm:w-44 px-3 sm:px-5 py-3 sm:py-4 text-right"
-      style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 800, color: '#ffffff' }}
+      style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(16px, 4vw, 28px)', fontWeight: 600, color: '#ffffff' }}
     >
       {formatValue(value)}
     </div>

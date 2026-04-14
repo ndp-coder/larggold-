@@ -118,6 +118,7 @@ interface RawRates {
   goldInr: number; silverInr: number;
   usdInr: number;
   goldChange: number; silverChange: number;
+  usdInrChange: number; usdInrCp: number;
   goldBid: number; goldAsk: number;
   silverBid: number; silverAsk: number;
 }
@@ -161,7 +162,6 @@ export function useLiveRates() {
       const goldDir   = prev ? getDir(raw.goldInr,  prev.goldInr)  : 'neutral';
       const silverDir = prev ? getDir(raw.silverInr, prev.silverInr) : 'neutral';
       const inrDir    = prev ? getDir(raw.usdInr,   prev.usdInr)   : 'neutral';
-      const prevInr   = prev?.usdInr ?? raw.usdInr;
 
       prevRaw.current = raw;
       setError(null);
@@ -186,7 +186,7 @@ export function useLiveRates() {
           price:  raw.usdInr,
           low:    Math.round(raw.usdInr * 0.9997 * 1000) / 1000,
           high:   Math.round(raw.usdInr * 1.0003 * 1000) / 1000,
-          change: ((raw.usdInr - prevInr) / prevInr) * 100,
+          change: raw.usdInrChange ?? 0,
         },
       });
 

@@ -11,13 +11,13 @@
 @keyframes flash-green {
   0%   { background-color: #009a52; color: #fff; }
   70%  { background-color: #009a52; color: #fff; }
-  100% { background-color: transparent; color: inherit; }
+  100% { background-color: transparent; }
 }
 
 @keyframes flash-red {
   0%   { background-color: #ee2d24; color: #fff; }
   70%  { background-color: #ee2d24; color: #fff; }
-  100% { background-color: transparent; color: inherit; }
+  100% { background-color: transparent; }
 }
 
 .flash-up {

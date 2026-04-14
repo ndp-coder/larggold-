@@ -54,6 +54,7 @@ function SkeletonRow() {
 
 function fmt(val: number, r: CostingRate): string {
   if (r.metal === 'inr') return val.toFixed(3);
+  if (r.currency === '$') return val.toFixed(2);
   return Math.round(val).toLocaleString('en-IN');
 }
 

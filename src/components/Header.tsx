@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import type { Page } from '../App';
-const logoImg = '/files_6010405-2026-04-14T11-02-56-013Z-image.png';
 
 interface HeaderProps {
   page: Page;
@@ -28,19 +27,14 @@ export default function Header({ page, setPage, isLoggedIn, onLogout }: HeaderPr
   return (
     <header className="sticky top-0 z-50" style={{ background: 'rgba(0,40,10,0.72)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.12)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16">
           <button
             onClick={() => navigate('home')}
-            className="flex items-center gap-3 focus:outline-none h-full"
+            className="flex items-center gap-0 focus:outline-none"
           >
-            <img
-              src={logoImg}
-              alt="Larg Gold Logo"
-              className="h-full w-auto object-contain py-1"
-            />
             <div
-              className="font-black text-2xl tracking-wide font-montserrat"
-              style={{ color: '#fcc201' }}
+              className="font-black text-xl sm:text-2xl tracking-wide font-montserrat px-4 py-1.5 rounded-sm"
+              style={{ backgroundColor: '#fcc201', color: '#1a1a1a' }}
             >
               LARG GOLD
             </div>

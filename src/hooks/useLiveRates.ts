@@ -104,6 +104,7 @@ function buildCostingRates(
       unit:  '/oz',
       currency: '$',
     },
+                      
     {
       metal: 'inr',
       col1:  Math.round(usdInr * 1000) / 1000,

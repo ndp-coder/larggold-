@@ -88,8 +88,8 @@ function buildCostingRates(
   return [
     {
       metal: 'gold',
-      col1:  Math.round((goldUsd/1.069) * 100) / 100,
-      col2:  Math.round((goldUsd/1.069) * 100) / 100,
+      col1:  Math.round((goldUsd/1.065) * 100) / 100,
+      col2:  Math.round((goldUsd/1.065) * 100) / 100,
       high:  Math.round(goldUsd * 100) / 100,
       low:   Math.round(goldUsd * 100) / 100,
       unit:  '/oz',

@@ -100,7 +100,7 @@ function buildCostingRates(
       col1:  Math.round((silverUsd/1.065) * 100) / 100,
       col2:  Math.round((silverUsd/1.065) * 100) / 100,
       high:  Math.round((silverUsd/1.065) * 100 / 100,
-      low:   Math.round((silverUsd/1.065) * 100 / 100,
+      low :  Math.round((silverUsd/1.065) * 100 / 100,
       unit:  '/oz',
       currency: '$',
     },

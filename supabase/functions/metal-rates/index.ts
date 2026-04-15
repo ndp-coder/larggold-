@@ -224,8 +224,8 @@ async function fetchFreshRates() {
     inrSource = "free-api-fallback";
   }
 
-  const goldUsd   = (goldLtp   / 10 / usdInr) * TROY_OZ_TO_GRAM;
-  const silverUsd = (silverLtp      / usdInr)  / TROY_OZ_TO_KG;
+  const goldUsd   = (goldLtp   / 10 / usdInr) * TROY_OZ_TO_GRAM/1,05;
+  const silverUsd = (silverLtp      / usdInr)  / TROY_OZ_TO_KG/1.05;
 
   const goldChg   = goldCp   ? ((goldLtp   - goldCp)   / goldCp)   * 100 : 0;
   const silverChg = silverCp ? ((silverLtp - silverCp) / silverCp) * 100 : 0;

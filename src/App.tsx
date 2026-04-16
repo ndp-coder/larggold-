@@ -7,11 +7,12 @@ import Footer from './components/Footer';
 import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import { useLiveRates } from './hooks/useLiveRates';
 import { supabase } from './hooks/lib/supabase';
 const bgImg = '/files_6010405-2026-04-14T11-02-56-013Z-image.png';
 
-export type Page = 'home' | 'about' | 'contact' | 'login';
+export type Page = 'home' | 'about' | 'contact' | 'login' | 'privacy';
 
 export default function App() {
   const [page, setPage] = useState<Page>('home');
@@ -87,6 +88,7 @@ export default function App() {
           <Login onClose={() => setPage('home')} onLoggedIn={() => { setIsLoggedIn(true); setPage('home'); }} />
         </div>
       )}
+      {page === 'privacy' && <div className="flex-1"><PrivacyPolicy /></div>}
       {page !== 'login' && <Footer setPage={setPage} />}
     </div>
   );

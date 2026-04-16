@@ -92,6 +92,12 @@ export default function Footer({ setPage }: FooterProps) {
             >
               Contact
             </button>
+            <button
+              onClick={() => { setPage('privacy'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="text-xs text-gray-400 hover:text-yellow-400 transition-colors font-opensans"
+            >
+              Privacy Policy
+            </button>
           </div>
           <p className="text-xs text-gray-400 leading-loose font-opensans">
             vijayawada &nbsp;|&nbsp; India

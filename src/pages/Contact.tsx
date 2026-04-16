@@ -50,7 +50,7 @@ export default function Contact() {
     {
       icon: MapPin,
       label: 'Location',
-      value: 'Murali Krishna, India',
+      value: 'Vijayawada, India',
       href: null,
     },
   ];

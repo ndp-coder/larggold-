@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.larggold.app",
+      "sha256_cert_fingerprints":
+        ["A4:D4:AC:28:33:3E:C5:4D:44:D6:95:9C:27:84:9C:E2:CC:3D:91:09:E5:D8:AE:92:59:69:E2:FD:59:01:BE:E5"]
+    }
+  }
+]

@@ -14,10 +14,42 @@ const bgImg = '/files_6010405-2026-04-14T11-02-56-013Z-image.png';
 
 export type Page = 'home' | 'about' | 'contact' | 'login' | 'privacy';
 
+const pathToPage: Record<string, Page> = {
+  '/': 'home',
+  '/about': 'about',
+  '/contact': 'contact',
+  '/login': 'login',
+  '/privacy-policy': 'privacy',
+};
+
+const pageToPath: Record<Page, string> = {
+  home: '/',
+  about: '/about',
+  contact: '/contact',
+  login: '/login',
+  privacy: '/privacy-policy',
+};
+
+function getPageFromPath(): Page {
+  return pathToPage[window.location.pathname] ?? 'home';
+}
+
 export default function App() {
-  const [page, setPage] = useState<Page>('home');
+  const [page, setPage] = useState<Page>(getPageFromPath);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { metalRates, priceDirection, tableRates, costingRates, lastUpdated, loading, error, marketClosed, nextMarketOpen } = useLiveRates();
+
+  const navigate = (p: Page) => {
+    const path = pageToPath[p];
+    window.history.pushState(null, '', path);
+    setPage(p);
+  };
+
+  useEffect(() => {
+    const onPop = () => setPage(getPageFromPath());
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -47,7 +79,7 @@ export default function App() {
           backgroundColor: '#002a0a',
           }}
     >
-      <Header page={page} setPage={setPage} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      <Header page={page} setPage={navigate} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       {page === 'home' && (
         <main className="flex-1" id="rates">
           {marketClosed && (
@@ -81,15 +113,15 @@ export default function App() {
           <CostingTable rates={costingRates} loading={loading} />
         </main>
       )}
-      {page === 'about' && <div className="flex-1"><AboutUs setPage={setPage} /></div>}
+      {page === 'about' && <div className="flex-1"><AboutUs setPage={navigate} /></div>}
       {page === 'contact' && <div className="flex-1"><Contact /></div>}
       {page === 'login' && (
         <div className="flex-1">
-          <Login onClose={() => setPage('home')} onLoggedIn={() => { setIsLoggedIn(true); setPage('home'); }} />
+          <Login onClose={() => navigate('home')} onLoggedIn={() => { setIsLoggedIn(true); navigate('home'); }} />
         </div>
       )}
       {page === 'privacy' && <div className="flex-1"><PrivacyPolicy /></div>}
-      {page !== 'login' && <Footer setPage={setPage} />}
+      {page !== 'login' && <Footer setPage={navigate} />}
     </div>
   );
 }

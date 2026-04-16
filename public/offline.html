@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offline — Larg Gold</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Montserrat', system-ui, sans-serif;
+        background: #002a0a;
+        color: #ffffff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        padding: 2rem;
+        text-align: center;
+      }
+      .icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(212, 175, 55, 0.15);
+        border: 2px solid rgba(212, 175, 55, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .icon svg { color: #d4af37; }
+      h1 { font-size: 1.75rem; font-weight: 700; color: #d4af37; letter-spacing: -0.02em; }
+      p { color: rgba(255,255,255,0.65); font-size: 0.95rem; max-width: 340px; line-height: 1.6; }
+      button {
+        margin-top: 0.5rem;
+        padding: 0.65rem 1.75rem;
+        background: #d4af37;
+        color: #002a0a;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      button:hover { opacity: 0.85; }
+    </style>
+  </head>
+  <body>
+    <div class="icon">
+      <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18M10.585 10.587A2 2 0 0013.414 13.414M17.976 17.976A10 10 0 015.025 5.025M9 9a3 3 0 014.243 4.243M9.879 9.879A3 3 0 0114.12 14.12"/>
+      </svg>
+    </div>
+    <h1>You are offline</h1>
+    <p>Live gold and silver rates require an internet connection. Please check your network and try again.</p>
+    <button onclick="window.location.reload()">Retry</button>
+  </body>
+</html>

@@ -11,6 +11,14 @@ export interface TableRate {
   value: number;
   highlight: boolean;
   direction?: 'up' | 'down' | 'neutral';
+  variable: 'x1' | 'x2' | 'y1' | 'y2';
+}
+
+export interface RateAdjustments {
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
 }
 
 export interface PriceDirection {
@@ -41,6 +49,7 @@ function getDir(next: number, prev: number): 'up' | 'down' | 'neutral' {
 
 function buildTableRates(
   goldInr: number, silverInr: number,
+  adjustments: RateAdjustments,
   prevGoldInr?: number, prevSilverInr?: number,
 ): TableRate[] {
   const sDir = prevSilverInr !== undefined ? getDir(silverInr, prevSilverInr) : 'neutral';
@@ -52,27 +61,31 @@ function buildTableRates(
   return [
     {
       label:     'SILVER IMP (ALL) 15 KG',
-      value:     silverPrice,
+      value:     silverPrice + (adjustments.x1 || 0),
       highlight: true,
       direction: sDir,
+      variable:  'x1',
     },
     {
       label:     'SILVER IMP (ALL)',
-      value:     silverPrice,
+      value:     silverPrice + (adjustments.x2 || 0),
       highlight: true,
       direction: sDir,
+      variable:  'x2',
     },
     {
       label:     'GOLD 999 IMP (ALL)',
-      value:     goldPrice,
+      value:     goldPrice + (adjustments.y1 || 0),
       highlight: false,
       direction: gDir,
+      variable:  'y1',
     },
     {
       label:     'GOLD 999 IND (ALL)',
-      value:     goldPrice,
+      value:     goldPrice + (adjustments.y2 || 0),
       highlight: false,
       direction: gDir,
+      variable:  'y2',
     },
   ];
 }
@@ -147,7 +160,9 @@ async function fetchAllRates(): Promise<RawRatesResponse> {
 
 // ── Hook ────────────────────────────────────────────────────────────────────
 
-export function useLiveRates() {
+const DEFAULT_ADJUSTMENTS: RateAdjustments = { x1: 0, x2: 0, y1: 0, y2: 0 };
+
+export function useLiveRates(adjustments: RateAdjustments = DEFAULT_ADJUSTMENTS) {
   const [metalRates, setMetalRates]       = useState<MetalRates | null>(null);
   const [priceDirection, setPriceDirection] = useState<PriceDirection>({ gold: 'neutral', silver: 'neutral', inr: 'neutral' });
   const [tableRates, setTableRates]       = useState<TableRate[]>([]);
@@ -158,6 +173,18 @@ export function useLiveRates() {
   const [marketClosed, setMarketClosed]   = useState(false);
   const [nextMarketOpen, setNextMarketOpen] = useState<string | null>(null);
   const prevRaw = useRef<RawRates | null>(null);
+  const adjustmentsRef = useRef<RateAdjustments>(adjustments);
+
+  useEffect(() => {
+    adjustmentsRef.current = adjustments;
+    if (prevRaw.current) {
+      setTableRates(buildTableRates(
+        prevRaw.current.goldInr,
+        prevRaw.current.silverInr,
+        adjustments,
+      ));
+    }
+  }, [adjustments.x1, adjustments.x2, adjustments.y1, adjustments.y2]);
 
   const update = async () => {
     try {
@@ -195,7 +222,7 @@ export function useLiveRates() {
         },
       });
 
-      setTableRates(buildTableRates(raw.goldInr, raw.silverInr, prev?.goldInr, prev?.silverInr));
+      setTableRates(buildTableRates(raw.goldInr, raw.silverInr, adjustmentsRef.current, prev?.goldInr, prev?.silverInr));
       setCostingRates(buildCostingRates(raw.goldUsd, raw.silverUsd, raw.usdInr));
       setLastUpdated(new Date());
       setLoading(false);

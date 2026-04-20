@@ -4,7 +4,7 @@
   "description": "Real-time gold and silver live rates platform for bullion traders",
   "start_url": "/",
   "scope": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#d4af37",

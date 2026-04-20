@@ -17,13 +17,13 @@
       "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "mobile_image.png/ChatGPT_Image_Apr_20,_2026,_11_40_44_AM.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-512-maskable.png",
+      "src": "/home/project/public/mobile_image.png/ChatGPT_Image_Apr_20,_2026,_11_40_44_AM.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

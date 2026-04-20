@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
+import type { UserProfile } from './components/Header';
 import MetalCards from './components/MetalCards';
 import RatesTable from './components/RatesTable';
 import CostingTable from './components/CostingTable';
@@ -41,6 +42,7 @@ export default function App() {
   const [page, setPage] = useState<Page>(getPageFromPath);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [firmName, setFirmName] = useState<string | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
 
   const { adjustments, isAdmin, saving, saveAdjustments } = useRateAdjustments(isLoggedIn, firmName);
   const { metalRates, priceDirection, tableRates, costingRates, lastUpdated, loading, error, marketClosed, nextMarketOpen } = useLiveRates(adjustments);
@@ -76,16 +78,23 @@ export default function App() {
   const loadFirmName = async (userId: string) => {
     const { data } = await supabase
       .from('user_profiles')
-      .select('firm_name')
+      .select('firm_name, mobile, location, email')
       .eq('id', userId)
       .maybeSingle();
-    setFirmName(data?.firm_name ?? null);
+    if (data) {
+      setFirmName(data.firm_name ?? null);
+      setProfile({ firm_name: data.firm_name, mobile: data.mobile, location: data.location, email: data.email });
+    } else {
+      setFirmName(null);
+      setProfile(null);
+    }
   };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsLoggedIn(false);
     setFirmName(null);
+    setProfile(null);
   };
 
   return (
@@ -101,7 +110,7 @@ export default function App() {
         backgroundColor: '#002a0a',
       }}
     >
-      <Header page={page} setPage={navigate} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      <Header page={page} setPage={navigate} isLoggedIn={isLoggedIn} onLogout={handleLogout} profile={profile} />
       {page === 'home' && (
         <main className="flex-1" id="rates">
           {marketClosed && (

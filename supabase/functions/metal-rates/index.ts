@@ -5,17 +5,17 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+  "Cache-Control": "no-store",
 };
 
-const UPSTOX_TOKEN = Deno.env.get("UPSTOX_TOKEN") ??
-  "eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiIyUENUN0MiLCJqdGkiOiI2OWRjOTI5NzEzM2E1NDdhYWRhOTM3YTIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaXNQbHVzUGxhbiI6dHJ1ZSwiaXNFeHRlbmRlZCI6dHJ1ZSwiaWF0IjoxNzc2MDYzMTI3LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE4MDc2NTM2MDB9.MXxFZfcDjxy5x_2P79iASA6X7viAenfGCw7xrHnYEv4";
+const UPSTOX_TOKEN = Deno.env.get("UPSTOX_TOKEN") ?? "";
 
 const UPSTOX_HEADERS = {
   Authorization: `Bearer ${UPSTOX_TOKEN}`,
   Accept: "application/json",
 };
 
-const CACHE_TTL_MS = 15000;
+const CACHE_TTL_MS = 1000;
 const CACHE_KEY = "metal-rates-v1";
 
 const TROY_OZ_TO_GRAM = 31.1035;
@@ -38,11 +38,11 @@ async function getCacheEntry() {
   return data ?? null;
 }
 
-async function setCachedRates(rates: object) {
+async function setCachedRates(rates: object, fetchedAt: string) {
   const supabase = getSupabase();
   await supabase
     .from("rates_cache")
-    .upsert({ id: CACHE_KEY, data: rates, fetched_at: new Date().toISOString() });
+    .upsert({ id: CACHE_KEY, data: rates, fetched_at: fetchedAt });
 }
 
 interface McxInstrument {
@@ -176,6 +176,7 @@ function getNextMarketOpen(): string {
 }
 
 async function fetchFreshRates() {
+  if (!UPSTOX_TOKEN) throw new Error("UPSTOX_TOKEN is not configured");
   const instruments = await getAllInstruments();
 
   const goldKey   = getFrontMonthKey(instruments, "MCX_FO", "GOLD");
@@ -262,7 +263,7 @@ Deno.serve(async (req: Request) => {
     if (cacheEntry) {
       const age = now - new Date(cacheEntry.fetched_at).getTime();
       if (age <= CACHE_TTL_MS) {
-        return new Response(JSON.stringify({ ...cacheEntry.data, fromCache: true }), {
+        return new Response(JSON.stringify({ ...cacheEntry.data, fromCache: true, cachedAt: cacheEntry.fetched_at }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -270,8 +271,9 @@ Deno.serve(async (req: Request) => {
 
     try {
       const rates = await fetchFreshRates();
-      EdgeRuntime.waitUntil(setCachedRates(rates));
-      return new Response(JSON.stringify(rates), {
+      const cachedAt = new Date().toISOString();
+      EdgeRuntime.waitUntil(setCachedRates(rates, cachedAt));
+      return new Response(JSON.stringify({ ...rates, cachedAt }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     } catch (fetchErr) {

@@ -117,7 +117,7 @@ function buildCostingRates(
       unit:  '/oz',
       currency: '$',
     },
-                      
+
     {
       metal: 'inr',
       col1:  Math.round(usdInr * 1000) / 1000,
@@ -150,8 +150,8 @@ interface RawRatesResponse extends RawRates {
   cachedAt?: string;
 }
 
-async function fetchAllRates(): Promise<RawRatesResponse> {
-  const res = await fetch(EDGE_URL, { headers: EDGE_HEADERS });
+async function fetchAllRates(signal: AbortSignal): Promise<RawRatesResponse> {
+  const res = await fetch(EDGE_URL, { headers: EDGE_HEADERS, cache: 'no-store', signal });
   const data = await res.json();
   if (data.error) throw new Error(data.error);
   if (!res.ok) throw new Error('Edge function unavailable');
@@ -186,57 +186,74 @@ export function useLiveRates(adjustments: RateAdjustments = DEFAULT_ADJUSTMENTS)
     }
   }, [adjustments.x1, adjustments.x2, adjustments.y1, adjustments.y2]);
 
-  const update = async () => {
-    try {
-      const raw  = await fetchAllRates();
-      const prev = prevRaw.current;
-
-      const goldDir   = prev ? getDir(raw.goldInr,  prev.goldInr)  : 'neutral';
-      const silverDir = prev ? getDir(raw.silverInr, prev.silverInr) : 'neutral';
-      const inrDir    = prev ? getDir(raw.usdInr,   prev.usdInr)   : 'neutral';
-
-      prevRaw.current = raw;
-      setError(null);
-      setMarketClosed(raw.marketClosed ?? false);
-      setNextMarketOpen(raw.nextMarketOpen ?? null);
-      setPriceDirection({ gold: goldDir, silver: silverDir, inr: inrDir });
-
-      setMetalRates({
-        gold: {
-          price:  raw.goldInr,
-          low:    Math.round(raw.goldInr * 0.9995 * 10) / 10,
-          high:   Math.round(raw.goldInr * 1.0005 * 10) / 10,
-          change: raw.goldChange,
-        },
-        silver: {
-          price:  raw.silverInr,
-          low:    Math.round(raw.silverInr * 0.999),
-          high:   Math.round(raw.silverInr * 1.001),
-          change: raw.silverChange,
-        },
-        inr: {
-          price:  raw.usdInr,
-          low:    Math.round(raw.usdInr * 0.9997 * 1000) / 1000,
-          high:   Math.round(raw.usdInr * 1.0003 * 1000) / 1000,
-          change: raw.usdInrChange ?? 0,
-        },
-      });
-
-      setTableRates(buildTableRates(raw.goldInr, raw.silverInr, adjustmentsRef.current, prev?.goldInr, prev?.silverInr));
-      setCostingRates(buildCostingRates(raw.goldUsd, raw.silverUsd, raw.usdInr));
-      setLastUpdated(new Date());
-      setLoading(false);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      setError(`Unable to fetch live rates (${msg}). Retrying...`);
-      if (!prevRaw.current) setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let stopped = false;
+    let pending: AbortController | null = null;
+
+    const update = async () => {
+      // Skip this tick if the previous request is still running.
+      if (pending) return;
+      const controller = new AbortController();
+      pending = controller;
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      try {
+        const raw  = await fetchAllRates(controller.signal);
+        if (stopped) return;
+        const prev = prevRaw.current;
+
+        const goldDir   = prev ? getDir(raw.goldInr,  prev.goldInr)  : 'neutral';
+        const silverDir = prev ? getDir(raw.silverInr, prev.silverInr) : 'neutral';
+        const inrDir    = prev ? getDir(raw.usdInr,   prev.usdInr)   : 'neutral';
+
+        prevRaw.current = raw;
+        setError(null);
+        setMarketClosed(raw.marketClosed ?? false);
+        setNextMarketOpen(raw.nextMarketOpen ?? null);
+        setPriceDirection({ gold: goldDir, silver: silverDir, inr: inrDir });
+
+        setMetalRates({
+          gold: {
+            price:  raw.goldInr,
+            low:    Math.round(raw.goldInr * 0.9995 * 10) / 10,
+            high:   Math.round(raw.goldInr * 1.0005 * 10) / 10,
+            change: raw.goldChange,
+          },
+          silver: {
+            price:  raw.silverInr,
+            low:    Math.round(raw.silverInr * 0.999),
+            high:   Math.round(raw.silverInr * 1.001),
+            change: raw.silverChange,
+          },
+          inr: {
+            price:  raw.usdInr,
+            low:    Math.round(raw.usdInr * 0.9997 * 1000) / 1000,
+            high:   Math.round(raw.usdInr * 1.0003 * 1000) / 1000,
+            change: raw.usdInrChange ?? 0,
+          },
+        });
+
+        setTableRates(buildTableRates(raw.goldInr, raw.silverInr, adjustmentsRef.current, prev?.goldInr, prev?.silverInr));
+        setCostingRates(buildCostingRates(raw.goldUsd, raw.silverUsd, raw.usdInr));
+        setLastUpdated(new Date(raw.cachedAt ?? Date.now()));
+        setLoading(false);
+      } catch (err) {
+        if (stopped) return;
+        const msg = err instanceof Error ? err.message : 'Unknown error';
+        setError(`Unable to fetch live rates (${msg}). Retrying...`);
+        if (!prevRaw.current) setLoading(false);
+      } finally {
+        clearTimeout(timeout);
+        pending = null;
+      }
+    };
+
     update();
-    const interval = setInterval(update, 15000);
-    return () => clearInterval(interval);
+    const interval = setInterval(update, 1000);
+    return () => {
+      stopped = true;
+      clearInterval(interval);
+      pending?.abort();
+    };
   }, []);
 
   return { metalRates, priceDirection, tableRates, costingRates, lastUpdated, loading, error, marketClosed, nextMarketOpen };
